@@ -135,6 +135,9 @@
     $('btn-done').addEventListener('click', () => window.Game.completeCurrent());
     $('btn-replace').addEventListener('click', () => window.Game.replaceCurrent());
     $('btn-end-game').addEventListener('click', () => window.Game.endGame());
+
+    $('btn-play-again').addEventListener('click', () => window.Game.playAgain());
+    $('btn-back-home').addEventListener('click', () => window.Game.backHome());
   }
 
   /* ====== Настройки (модалка) ====== */
