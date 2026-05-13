@@ -161,6 +161,10 @@ window.Game = (function () {
       highlightSlot(idx);
       state.selectedIdx = idx;
       await wait(360);
+      // Реклама — после того как бутылочка выбрала карточку,
+      // но до того как её прочитают. Так контракт прочитанной
+      // карточки не разрывается.
+      await maybeShowInterstitial();
       revealCurrentSlot();
     }, 2700);
   }
@@ -253,8 +257,6 @@ window.Game = (function () {
       showEndOverlay();
       return;
     }
-
-    await maybeShowInterstitial();
 
     switchTurn();
     renderTurnHeader();
