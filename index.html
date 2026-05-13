@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#ff5e8a" />
+  <title>Правда или Действие — для пар</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ================= Онбординг ================= -->
+  <section id="screen-onboarding" class="screen">
+    <div class="onb-box">
+      <h1>Правда или Действие</h1>
+      <p class="onb-text">
+        Игра предназначена для пар. Выполняйте задания только по
+        <b>взаимному согласию</b>. Любую карточку можно пропустить
+        без штрафов и обид.
+      </p>
+      <p class="onb-text" style="margin-top:8px;">
+        Здесь нет 18+, опасных или унижающих заданий. Если карточка не подходит — нажмите «Пропустить».
+      </p>
+      <label class="onb-check">
+        <input type="checkbox" id="onb-checkbox" />
+        Понятно, играем по согласию
+      </label>
+      <button id="onb-continue" class="btn" disabled>Продолжить</button>
+    </div>
+  </section>
+
+  <!-- ================= Главная ================= -->
+  <section id="screen-home" class="screen">
+    <h1 class="title">Правда или Действие</h1>
+    <p class="subtitle">Тёплая игра для пары · 200+ карточек</p>
+
+    <div class="home-card">
+      <h3>Игроки</h3>
+      <div class="input-row">
+        <input id="input-p1" class="input" type="text" placeholder="Имя первого игрока" maxlength="20" />
+        <input id="input-p2" class="input" type="text" placeholder="Имя второго игрока" maxlength="20" />
+      </div>
+    </div>
+
+    <div class="home-card">
+      <h3>Режим</h3>
+      <div class="modes-grid">
+        <button class="mode-btn" data-mode="soft">Нежный</button>
+        <button class="mode-btn" data-mode="flirt">Флирт</button>
+        <button class="mode-btn" data-mode="romance">Романтика</button>
+        <button class="mode-btn" data-mode="funny">Смешной</button>
+        <button class="mode-btn selected" data-mode="mixed">Смешанный</button>
+      </div>
+    </div>
+
+    <div class="home-card">
+      <h3>Интенсивность</h3>
+      <div class="range-row">
+        <div class="row"><span>Поспокойнее</span><span>Посмелее</span></div>
+        <input id="input-intensity" type="range" min="1" max="5" value="3" />
+        <div class="row"><span>Уровень</span><span id="intensity-label">3</span></div>
+      </div>
+    </div>
+
+    <div class="home-card">
+      <h3>Настройки</h3>
+      <div class="toggles">
+        <label class="toggle">Звук эффектов <input type="checkbox" id="sound-toggle" /></label>
+        <label class="toggle">Вибрация <input type="checkbox" id="vibration-toggle" /></label>
+      </div>
+    </div>
+
+    <div class="home-actions">
+      <button id="btn-play" class="btn">Играть</button>
+      <button id="btn-stats-from-home" class="btn btn-secondary">Моя статистика</button>
+      <button id="btn-reset-stats" class="btn btn-ghost">Сбросить статистику</button>
+    </div>
+  </section>
+
+  <!-- ================= Игра ================= -->
+  <section id="screen-game" class="screen">
+    <div class="game-head">
+      <div class="turn">Ход:<b id="current-player">—</b></div>
+      <button id="btn-end-game" class="end-btn">Закончить</button>
+    </div>
+
+    <!-- Выбор типа -->
+    <div id="type-choice" class="type-choice">
+      <button id="btn-truth"  class="btn btn-truth-pick">Правда</button>
+      <button id="btn-dare"   class="btn btn-dare-pick">Действие</button>
+      <button id="btn-random" class="btn btn-random-pick">Случайно</button>
+    </div>
+
+    <!-- Карточка -->
+    <div id="card" class="card hidden">
+      <div class="meta">
+        <span class="type-tag" id="card-type">Правда</span>
+        <span class="cat-tag" id="card-category">нежные</span>
+        <span class="player-chip" id="card-player">—</span>
+      </div>
+      <div class="text" id="card-text">…</div>
+      <div class="consent" id="card-consent"></div>
+    </div>
+
+    <div id="card-actions" class="card-actions hidden">
+      <button id="btn-done"   class="btn btn-done">Выполнено</button>
+      <button id="btn-skip"   class="btn btn-skip">Пропустить</button>
+      <button id="btn-reroll" class="btn btn-reroll">Другая</button>
+    </div>
+
+    <div class="bonus-row">
+      <button id="btn-bonus-card"  class="bonus-btn">+ Бонусная карточка</button>
+      <button id="btn-bonus-skips" class="bonus-btn">+ 3 бесплатных пропуска</button>
+    </div>
+  </section>
+
+  <!-- ================= Статистика ================= -->
+  <section id="screen-stats" class="screen">
+    <h1 class="title">Итоги</h1>
+    <p class="subtitle">Маленький след вашего вечера</p>
+    <div class="stats-list">
+      <div class="stat-row"><span>Сыграно карточек</span><b id="stat-played">0</b></div>
+      <div class="stat-row"><span>Правда</span><b id="stat-truth">0</b></div>
+      <div class="stat-row"><span>Действие</span><b id="stat-dare">0</b></div>
+      <div class="stat-row"><span>Пропусков</span><b id="stat-skipped">0</b></div>
+      <div class="stat-row"><span>Любимый тип</span><b id="stat-favourite">—</b></div>
+    </div>
+    <div class="home-actions" style="margin-top:20px;">
+      <button id="btn-new-game" class="btn">Новая игра</button>
+    </div>
+  </section>
+
+  <!-- ================= Скрипты ================= -->
+  <script src="config.js"></script>
+  <script src="storage.js"></script>
+  <script src="cards.js"></script>
+  <script src="cardEngine.js"></script>
+  <script src="ads.js"></script>
+  <script src="audio.js"></script>
+  <script src="ui.js"></script>
+  <script src="game.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
