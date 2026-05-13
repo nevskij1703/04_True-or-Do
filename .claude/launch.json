@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Python static server",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8080"],
+      "port": 8080
+    },
+    {
+      "name": "npx serve",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", ".", "-l", "5173"],
+      "port": 5173
+    },
+    {
+      "name": "npx http-server",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", ".", "-p", "8000", "-c-1"],
+      "port": 8000
+    }
+  ]
+}

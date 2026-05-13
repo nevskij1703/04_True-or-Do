@@ -1,16 +1,16 @@
 /**
- * main.js — точка входа. Бутстраппит экраны и обработчики.
- * Также монтирует dev-панель при ?dev=1.
+ * main.js — точка входа.
+ * Бутстраппит экраны, обработчики, фоновые сердечки и dev-панель.
  */
 (function () {
   function $(id) { return document.getElementById(id); }
 
   function ready() {
+    mountHeartsBg();
     initOnboarding();
+    initSettingsFab();
     initHomeScreen();
     initGameScreen();
-    initStatsScreen();
-    initSettings();
     initDevPanel();
     initialNavigate();
   }
@@ -18,12 +18,33 @@
   function initialNavigate() {
     if (!window.Storage.isOnboarded()) {
       window.UI.show('screen-onboarding');
+      $('btn-settings').classList.add('hidden');
     } else {
       hydrateHome();
       window.UI.show('screen-home');
+      $('btn-settings').classList.remove('hidden');
     }
   }
 
+  /* ====== Фоновые сердечки ====== */
+  function mountHeartsBg() {
+    const bg = $('hearts-bg');
+    if (!bg) return;
+    const N = 16;
+    for (let i = 0; i < N; i++) {
+      const h = document.createElement('span');
+      h.className = 'heart-float';
+      h.style.left = Math.random() * 100 + '%';
+      h.style.animationDelay = (-Math.random() * 18) + 's';
+      h.style.animationDuration = (12 + Math.random() * 14) + 's';
+      h.style.fontSize = (10 + Math.random() * 22) + 'px';
+      h.style.opacity = (0.25 + Math.random() * 0.55).toFixed(2);
+      h.textContent = '♥';
+      bg.appendChild(h);
+    }
+  }
+
+  /* ====== Онбординг ====== */
   function initOnboarding() {
     const cb = $('onb-checkbox');
     const btn = $('onb-continue');
@@ -31,14 +52,19 @@
     btn.addEventListener('click', () => {
       window.Storage.setOnboarded();
       hydrateHome();
+      $('btn-settings').classList.remove('hidden');
       window.UI.show('screen-home');
     });
   }
 
+  /* ====== Главная ====== */
   function hydrateHome() {
     const p = window.Storage.getPlayers();
     $('input-p1').value = p.p1;
     $('input-p2').value = p.p2;
+    selectGender(1, p.g1);
+    selectGender(2, p.g2);
+
     const mode = window.Storage.getMode();
     document.querySelectorAll('.mode-btn').forEach(b => {
       b.classList.toggle('selected', b.dataset.mode === mode);
@@ -46,11 +72,37 @@
     const intensity = window.Storage.getIntensity();
     $('input-intensity').value = intensity;
     $('intensity-label').textContent = intensity;
-    $('sound-toggle').checked = window.Storage.getSound();
-    $('vibration-toggle').checked = window.Storage.getVibration();
+  }
+
+  function selectGender(playerNum, gender) {
+    document
+      .querySelectorAll('.gender-btn[data-player="' + playerNum + '"]')
+      .forEach(b => b.classList.toggle('selected', b.dataset.gender === gender));
+  }
+
+  function readGender(playerNum) {
+    const sel = document.querySelector(
+      '.gender-btn[data-player="' + playerNum + '"].selected'
+    );
+    return sel ? sel.dataset.gender : (playerNum === 1 ? 'female' : 'male');
   }
 
   function initHomeScreen() {
+    document.querySelectorAll('.gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const num = btn.dataset.player;
+        document
+          .querySelectorAll('.gender-btn[data-player="' + num + '"]')
+          .forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        savePlayers();
+      });
+    });
+
+    ['input-p1', 'input-p2'].forEach(id => {
+      $(id).addEventListener('input', savePlayers);
+    });
+
     document.querySelectorAll('.mode-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
@@ -66,70 +118,58 @@
     });
 
     $('btn-play').addEventListener('click', () => {
-      const p1 = $('input-p1').value.trim() || 'Игрок 1';
-      const p2 = $('input-p2').value.trim() || 'Игрок 2';
-      window.Storage.setPlayers(p1, p2);
+      savePlayers();
       window.Game.start();
     });
-
-    $('btn-stats-from-home').addEventListener('click', () => {
-      window.Game.end();
-    });
-
-    $('btn-reset-stats').addEventListener('click', () => {
-      if (!confirm('Сбросить статистику?')) return;
-      window.Storage.resetStats();
-      window.UI.toast('Статистика сброшена');
-    });
   }
 
+  function savePlayers() {
+    const p1 = $('input-p1').value.trim() || 'Игрок 1';
+    const p2 = $('input-p2').value.trim() || 'Игрок 2';
+    window.Storage.setPlayers(p1, p2, readGender(1), readGender(2));
+  }
+
+  /* ====== Игра ====== */
   function initGameScreen() {
-    $('btn-truth').addEventListener('click', () => window.Game.pickType('truth'));
-    $('btn-dare').addEventListener('click', () => window.Game.pickType('dare'));
-    $('btn-random').addEventListener('click', () => window.Game.pickType('any'));
-
+    $('bottle').addEventListener('click', () => window.Game.spinBottle());
     $('btn-done').addEventListener('click', () => window.Game.completeCurrent());
-    $('btn-skip').addEventListener('click', () => window.Game.skipCurrent());
-    $('btn-reroll').addEventListener('click', () => window.Game.rerollCurrent());
-
-    $('btn-end-game').addEventListener('click', () => window.Game.end());
-
-    // Rewarded — бонус-карточка
-    $('btn-bonus-card').addEventListener('click', async () => {
-      const r = await window.AdManager.showRewardedAd({ kind: 'extraCard' });
-      if (r.watched) window.Game.rewardExtraCard();
-    });
-    // Rewarded — бесплатные пропуски
-    $('btn-bonus-skips').addEventListener('click', async () => {
-      const r = await window.AdManager.showRewardedAd({ kind: 'freeSkips' });
-      if (r.watched) window.Game.rewardFreeSkips(3);
-    });
+    $('btn-replace').addEventListener('click', () => window.Game.replaceCurrent());
+    $('btn-end-game').addEventListener('click', () => window.Game.endGame());
   }
 
-  function initStatsScreen() {
-    $('btn-new-game').addEventListener('click', () => {
-      window.UI.show('screen-home');
+  /* ====== Настройки (модалка) ====== */
+  function initSettingsFab() {
+    const fab = $('btn-settings');
+    const modal = $('settings-modal');
+    const close = $('settings-close');
+    const sound = $('sound-toggle');
+    const vibration = $('vibration-toggle');
+
+    sound.checked = window.Storage.getSound();
+    vibration.checked = window.Storage.getVibration();
+
+    fab.addEventListener('click', () => {
+      sound.checked = window.Storage.getSound();
+      vibration.checked = window.Storage.getVibration();
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => modal.classList.add('show'));
     });
+
+    function dismiss() {
+      modal.classList.remove('show');
+      setTimeout(() => modal.classList.add('hidden'), 220);
+    }
+
+    close.addEventListener('click', dismiss);
+    modal.addEventListener('click', e => {
+      if (e.target === modal) dismiss();
+    });
+
+    sound.addEventListener('change', e => window.Storage.setSound(e.target.checked));
+    vibration.addEventListener('change', e => window.Storage.setVibration(e.target.checked));
   }
 
-  function initSettings() {
-    $('sound-toggle').addEventListener('change', e => {
-      window.Storage.setSound(e.target.checked);
-    });
-    $('vibration-toggle').addEventListener('change', e => {
-      window.Storage.setVibration(e.target.checked);
-    });
-  }
-
-  /**
-   * Dev-панель — открывается с ?dev=1.
-   * Возможности:
-   *   - список всех карточек;
-   *   - фильтры;
-   *   - проверка дубликатов id и пустых текстов;
-   *   - blacklist;
-   *   - сброс localStorage и переключатель Mock Ads.
-   */
+  /* ====== Dev-панель ====== */
   function initDevPanel() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('dev') !== '1') return;
@@ -158,7 +198,6 @@
       </div>
       <div class="dev-row dev-actions">
         <button id="dev-check">Проверить контент</button>
-        <button id="dev-export">Экспорт статистики</button>
         <button id="dev-reset">Сбросить localStorage</button>
         <label class="dev-mock"><input type="checkbox" id="dev-mock"> Mock Ads</label>
       </div>
@@ -166,7 +205,6 @@
       <div id="dev-list" class="dev-list"></div>`;
     document.body.appendChild(root);
 
-    // заполняем категории
     const cats = Array.from(new Set(window.CARDS.map(c => c.category)));
     const catSel = root.querySelector('#dev-cat');
     cats.forEach(c => {
@@ -210,7 +248,6 @@
     typeSel.addEventListener('change', render);
     catSel.addEventListener('change', render);
     intInp.addEventListener('input', render);
-
     root.querySelector('#dev-close').addEventListener('click', () => root.remove());
 
     root.querySelector('#dev-check').addEventListener('click', () => {
@@ -230,13 +267,6 @@
         bad.length ? `⚠ Подозрительный контент: ${bad.join(', ')}` : '✓ Запрещённых слов не найдено'
       ];
       alert(lines.join('\n'));
-    });
-
-    root.querySelector('#dev-export').addEventListener('click', () => {
-      const stats = window.Storage.getStats();
-      const data = JSON.stringify(stats, null, 2);
-      navigator.clipboard?.writeText(data);
-      alert('Статистика скопирована в буфер:\n' + data);
     });
 
     root.querySelector('#dev-reset').addEventListener('click', () => {

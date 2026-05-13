@@ -9,8 +9,6 @@ window.Storage = (function () {
     mode:         PREFIX + 'mode',
     intensity:    PREFIX + 'intensity',
     seenCards:    PREFIX + 'seenCards',
-    stats:        PREFIX + 'stats',
-    unlocks:      PREFIX + 'unlocks',
     sound:        PREFIX + 'sound',
     vibration:    PREFIX + 'vibration',
     onboardingOk: PREFIX + 'onboardingOk',
@@ -39,12 +37,20 @@ window.Storage = (function () {
     try { localStorage.removeItem(key); } catch (e) {}
   }
 
-  // === Игроки ===
+  // === Игроки + пол ===
   function getPlayers() {
-    return get(KEYS.players, { p1: 'Игрок 1', p2: 'Игрок 2' });
+    return get(KEYS.players, {
+      p1: 'Игрок 1', p2: 'Игрок 2',
+      g1: 'female',  g2: 'male'
+    });
   }
-  function setPlayers(p1, p2) {
-    set(KEYS.players, { p1: p1 || 'Игрок 1', p2: p2 || 'Игрок 2' });
+  function setPlayers(p1, p2, g1, g2) {
+    set(KEYS.players, {
+      p1: p1 || 'Игрок 1',
+      p2: p2 || 'Игрок 2',
+      g1: g1 || 'female',
+      g2: g2 || 'male'
+    });
   }
 
   // === Режим ===
@@ -68,36 +74,6 @@ window.Storage = (function () {
     set(KEYS.seenCards, seen);
   }
   function resetSeenCards() { set(KEYS.seenCards, []); }
-
-  // === Статистика ===
-  function getStats() {
-    return get(KEYS.stats, {
-      played: 0, truth: 0, dare: 0, skipped: 0, sessions: 0
-    });
-  }
-  function setStats(stats) { set(KEYS.stats, stats); }
-  function incStat(key, by) {
-    const s = getStats();
-    s[key] = (s[key] || 0) + (by || 1);
-    setStats(s);
-  }
-  function resetStats() {
-    setStats({ played: 0, truth: 0, dare: 0, skipped: 0, sessions: 0 });
-  }
-
-  // === Разблокированные наборы ===
-  function getUnlocks() { return get(KEYS.unlocks, {}); }
-  function setUnlock(packId, expiresAt) {
-    const u = getUnlocks();
-    u[packId] = expiresAt;
-    set(KEYS.unlocks, u);
-  }
-  function isUnlocked(packId) {
-    const u = getUnlocks();
-    if (!u[packId]) return false;
-    if (u[packId] === true) return true;
-    return u[packId] > Date.now();
-  }
 
   // === Звук и вибрация ===
   function getSound() { return get(KEYS.sound, window.GAME_CONFIG.enableSound); }
@@ -125,8 +101,6 @@ window.Storage = (function () {
     getMode, setMode,
     getIntensity, setIntensity,
     getSeenCards, addSeenCard, resetSeenCards,
-    getStats, setStats, incStat, resetStats,
-    getUnlocks, setUnlock, isUnlocked,
     getSound, setSound, getVibration, setVibration,
     isOnboarded, setOnboarded,
     getMockAds, setMockAds,
