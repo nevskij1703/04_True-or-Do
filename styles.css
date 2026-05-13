@@ -510,10 +510,12 @@ input[type="range"]::-moz-range-thumb {
 
 /* Карточка-объект (играет роль игральной карточки) */
 .card {
-  position: absolute;
-  left: 18px; right: 18px;
-  top: 66%;
-  transform: translateY(-50%);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100vw - 36px);
+  max-width: 504px;
   min-height: 260px;
   padding: 24px 22px 18px;
   border-radius: 24px;
@@ -598,18 +600,21 @@ input[type="range"]::-moz-range-thumb {
 .card .consent.show { display: block; }
 
 .card-actions {
-  position: absolute;
-  bottom: 24px;
-  left: 18px; right: 18px;
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100vw - 36px);
+  max-width: 504px;
   display: flex; flex-direction: column;
   gap: 4px;
 }
 
 /* ====== Анимации ====== */
 @keyframes flipIn {
-  0%   { opacity: 0; transform: translateY(-50%) rotateY(70deg) scale(0.94); }
-  60%  { opacity: 1; transform: translateY(-50%) rotateY(-6deg) scale(1); }
-  100% { opacity: 1; transform: translateY(-50%) rotateY(0) scale(1); }
+  0%   { opacity: 0; transform: translate(-50%, -50%) rotateY(70deg) scale(0.94); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) rotateY(-6deg) scale(1); }
+  100% { opacity: 1; transform: translate(-50%, -50%) rotateY(0) scale(1); }
 }
 .card.flip-in {
   animation: flipIn .55s cubic-bezier(.2,.7,.3,1) both;
