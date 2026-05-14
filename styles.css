@@ -505,8 +505,9 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   min-height: 0;
 }
 .card-title-block {
+  flex-shrink: 0;
   text-align: center;
-  padding: 22px 8px 6px;
+  padding: 14px 8px 4px;
 }
 .card-title {
   margin: 0;
@@ -607,20 +608,25 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 
 /* Карточка-объект (играет роль игральной карточки) */
 .card-stack {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: calc(100vw - 36px);
-  max-width: 504px;
+  /* В нормальном flex-flow: занимает остаток высоты под title-block
+     и над .card-actions (которая всё ещё position: fixed внизу),
+     и центрирует карточку с кнопкой "Заменить" внутри этого остатка. */
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 504px;
+  margin: 0 auto;
+  padding: 6px 0 100px; /* нижний отступ — место под фикс. кнопку "Выполнено" */
 }
 .card {
   position: relative;
   width: 100%;
-  min-height: 260px;
-  padding: 24px 22px 18px;
+  min-height: 220px;
+  padding: 22px 22px 18px;
   border-radius: 24px;
   background:
     radial-gradient(120% 80% at 50% 0%, rgba(255, 45, 138, 0.18), transparent 70%),
@@ -693,10 +699,11 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 
 .card .card-text {
   position: absolute;
-  inset: 28px 22px;
+  /* inset > card-corner.font-size + corner.top, чтобы ?/! не налазили на текст */
+  inset: 46px 28px;
   margin: 0;
-  font-size: 21px;
-  line-height: 1.45;
+  font-size: 20px;
+  line-height: 1.4;
   font-weight: 600;
   color: var(--text);
   text-align: center;
@@ -972,7 +979,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 /* ====== Адаптив ====== */
 @media (max-width: 350px) {
   .modes-list { grid-template-columns: 1fr; }
-  .card .card-text { font-size: 18px; }
+  .card .card-text { font-size: 17px; inset: 44px 22px; }
   .circle-board {
     width: 92vw;
     --radius: 112px;
@@ -980,7 +987,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   }
   .slot .slot-symbol { font-size: 26px; }
   .bottle-btn { width: 96px; height: 168px; }
-  .card-title { font-size: 32px; }
+  .card-title { font-size: 30px; }
 }
 @media (min-height: 760px) {
   .circle-board { --radius: 144px; --slot-size: 56px; }
@@ -989,7 +996,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 
 /* Короткие экраны (поджимаем высоту) */
 @media (max-height: 720px) {
-  .screen { padding-top: 16px; padding-bottom: 18px; }
+  .screen { padding-top: 14px; padding-bottom: 16px; }
   .neon-title { font-size: 26px; }
   .circle-board { --radius: 108px; --slot-size: 44px; }
   .slot .slot-symbol { font-size: 26px; }
@@ -998,13 +1005,18 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   .player-chip { font-size: 13px; padding: 6px 12px; }
   .bottle-hint { font-size: 11px; }
 
-  .card { min-height: 200px; padding: 16px 18px 12px; }
-  .card .card-text { font-size: 17px; inset: 22px 18px; }
-  .card-title-block { padding: 8px 8px 4px; }
+  .card-stack { padding-bottom: 84px; }
+  .card { min-height: 190px; padding: 18px 20px 14px; }
+  .card .card-text { font-size: 17px; inset: 42px 24px; }
+  .card-corner { font-size: 26px; }
+  .card-corner.tl { top: 10px; left: 12px; }
+  .card-corner.br { bottom: 10px; right: 12px; }
+  .card-title-block { padding: 8px 8px 2px; }
   .card-title { font-size: 28px; }
   .title-badge { width: 48px; height: 48px; font-size: 30px; margin-bottom: 4px; }
-  .card-player-chip { font-size: 16px; padding: 8px 16px; margin-top: 8px; }
-  .btn-ghost-link.below-card { font-size: 15px; padding: 11px 14px; }
+  .card-player-chip { font-size: 15px; padding: 7px 14px; margin-top: 6px; }
+  .card-player-chip::before { font-size: 10px; padding-right: 6px; }
+  .btn-ghost-link.below-card { font-size: 15px; padding: 10px 14px; }
   .btn-ghost-link.below-card .replace-icon { width: 16px; height: 16px; }
 }
 @media (max-height: 580px) {
@@ -1019,10 +1031,15 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   .turns-counter { font-size: 11px; }
   .turns-counter b { font-size: 13px; }
 
-  .card { min-height: 140px; padding: 12px 14px 8px; }
-  .card .card-text { font-size: 15px; inset: 16px 14px; }
+  .card-stack { padding-bottom: 72px; }
+  .card { min-height: 160px; padding: 14px 16px 12px; }
+  .card .card-text { font-size: 14px; line-height: 1.35; inset: 36px 20px; }
+  .card-corner { font-size: 22px; }
+  .card-corner.tl { top: 8px; left: 10px; }
+  .card-corner.br { bottom: 8px; right: 10px; }
   .card-title { font-size: 22px; }
   .title-badge { width: 38px; height: 38px; font-size: 24px; margin-bottom: 2px; }
-  .card-player-chip { font-size: 14px; padding: 6px 14px; margin-top: 4px; }
+  .card-player-chip { font-size: 13px; padding: 5px 12px; margin-top: 4px; }
+  .card-player-chip::before { font-size: 9px; padding-right: 6px; }
   .card-title-block { padding: 4px 8px 2px; }
 }
