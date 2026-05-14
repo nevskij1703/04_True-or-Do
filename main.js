@@ -69,9 +69,6 @@
     document.querySelectorAll('.mode-btn').forEach(b => {
       b.classList.toggle('selected', b.dataset.mode === mode);
     });
-    const intensity = window.Storage.getIntensity();
-    $('input-intensity').value = intensity;
-    $('intensity-label').textContent = intensity;
   }
 
   function selectGender(playerNum, gender) {
@@ -109,12 +106,6 @@
         btn.classList.add('selected');
         window.Storage.setMode(btn.dataset.mode);
       });
-    });
-
-    $('input-intensity').addEventListener('input', e => {
-      const v = parseInt(e.target.value, 10);
-      $('intensity-label').textContent = v;
-      window.Storage.setIntensity(v);
     });
 
     $('btn-play').addEventListener('click', () => {
@@ -246,11 +237,8 @@
             <option value="dare">dare</option>
           </select>
         </label>
-        <label>Категория:
-          <select id="dev-cat"><option value="">все</option></select>
-        </label>
-        <label>Макс. intensity:
-          <input id="dev-int" type="number" min="1" max="5" value="5">
+        <label>Режим:
+          <select id="dev-mode"><option value="">все</option></select>
         </label>
       </div>
       <div class="dev-row dev-actions">
@@ -262,16 +250,15 @@
       <div id="dev-list" class="dev-list"></div>`;
     document.body.appendChild(root);
 
-    const cats = Array.from(new Set(window.CARDS.map(c => c.category)));
-    const catSel = root.querySelector('#dev-cat');
-    cats.forEach(c => {
+    const modes = Object.keys(window.GAME_CONFIG.modes);
+    const modeSel = root.querySelector('#dev-mode');
+    modes.forEach(m => {
       const o = document.createElement('option');
-      o.value = c; o.textContent = c;
-      catSel.appendChild(o);
+      o.value = m; o.textContent = m;
+      modeSel.appendChild(o);
     });
 
     const typeSel = root.querySelector('#dev-type');
-    const intInp = root.querySelector('#dev-int');
     const list = root.querySelector('#dev-list');
     const summary = root.querySelector('#dev-summary');
     const mockToggle = root.querySelector('#dev-mock');
@@ -279,20 +266,17 @@
 
     function render() {
       const t = typeSel.value;
-      const c = catSel.value;
-      const maxI = parseInt(intInp.value, 10) || 5;
+      const m = modeSel.value;
       const cards = window.CARDS.filter(card =>
         (!t || card.type === t) &&
-        (!c || card.category === c) &&
-        (card.intensity <= maxI)
+        (!m || card.mode === m)
       );
       summary.innerHTML = `Всего: <b>${window.CARDS.length}</b> · отфильтровано: <b>${cards.length}</b>`;
       list.innerHTML = cards.map(card =>
         `<div class="dev-card dev-${card.type}">
            <span class="dev-id">#${card.id}</span>
            <span class="dev-tag">${card.type}</span>
-           <span class="dev-tag">${card.category}</span>
-           <span class="dev-tag">i${card.intensity}</span>
+           <span class="dev-tag">${card.mode}</span>
            <div class="dev-text">${escapeHtml(card.text)}</div>
          </div>`
       ).join('');
@@ -303,8 +287,7 @@
     }
 
     typeSel.addEventListener('change', render);
-    catSel.addEventListener('change', render);
-    intInp.addEventListener('input', render);
+    modeSel.addEventListener('change', render);
     root.querySelector('#dev-close').addEventListener('click', () => root.remove());
 
     root.querySelector('#dev-check').addEventListener('click', () => {

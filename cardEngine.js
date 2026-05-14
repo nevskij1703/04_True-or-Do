@@ -3,14 +3,14 @@
  *
  * Принцип:
  *   1. Берём все карточки из CARDS.
- *   2. Фильтруем по режиму (категории) и максимальной интенсивности.
- *   3. Учитываем временно открытые премиум-категории.
+ *   2. Фильтруем по выбранному режиму (mode).
+ *   3. Учитываем временно открытые премиум-режимы.
  *   4. Убираем те, что уже видели в этой сессии.
  *   5. Если пул пустой — сбрасываем seen и перемешиваем заново.
  */
 window.CardEngine = (function () {
   let sessionSeen = new Set(); // только в рамках текущей сессии
-  let tempUnlocks = {};        // categoryName -> expiresAt (timestamp)
+  let tempUnlocks = {};        // modeName -> expiresAt (timestamp)
 
   function shuffle(arr) {
     const a = arr.slice();
@@ -21,27 +21,22 @@ window.CardEngine = (function () {
     return a;
   }
 
-  function isCategoryAllowed(category, allowedCategories) {
-    if (allowedCategories.includes(category)) return true;
-    // временно разблокированные категории
-    const exp = tempUnlocks[category];
+  function isModeAllowed(mode, requested) {
+    if (mode === requested) return true;
+    const exp = tempUnlocks[mode];
     if (exp && exp > Date.now()) return true;
     return false;
   }
 
   /**
    * Получить пул карточек по фильтрам.
-   * options = { type?: 'truth'|'dare'|'any', mode: 'soft'|..., maxIntensity: 1..5 }
+   * options = { type?: 'truth'|'dare'|'any', mode: 'romance'|'flirt'|'passion' }
    */
   function pool(options) {
-    const mode = window.GAME_CONFIG.modes[options.mode] || window.GAME_CONFIG.modes.mixed;
-    const allowed = mode.categories;
-    const maxI = options.maxIntensity || window.GAME_CONFIG.defaultMaxIntensity;
-
+    const requestedMode = options.mode || 'romance';
     return window.CARDS.filter(c => {
       if (options.type && options.type !== 'any' && c.type !== options.type) return false;
-      if (!isCategoryAllowed(c.category, allowed)) return false;
-      if (c.intensity > maxI) return false;
+      if (!isModeAllowed(c.mode, requestedMode)) return false;
       return true;
     });
   }
@@ -61,8 +56,7 @@ window.CardEngine = (function () {
     }
 
     const shuffled = shuffle(available);
-    const card = shuffled[0];
-    return card;
+    return shuffled[0];
   }
 
   /**
@@ -82,10 +76,8 @@ window.CardEngine = (function () {
     sessionSeen.clear();
   }
 
-  function unlockCategoryTemporarily(category, durationCards) {
-    // simplification: используем "сколько ходов осталось". Можно хранить число оставшихся ходов,
-    // но проще на основе времени — берём щедрый запас.
-    tempUnlocks[category] = Date.now() + (durationCards || window.GAME_CONFIG.rewardedUnlockDuration) * 60 * 1000;
+  function unlockModeTemporarily(mode, durationCards) {
+    tempUnlocks[mode] = Date.now() + (durationCards || window.GAME_CONFIG.rewardedUnlockDuration) * 60 * 1000;
   }
 
   function stats(options) {
@@ -103,7 +95,7 @@ window.CardEngine = (function () {
     markSeen,
     unmarkSeen,
     resetSession,
-    unlockCategoryTemporarily,
+    unlockModeTemporarily,
     stats
   };
 })();

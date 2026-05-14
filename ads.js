@@ -1,40 +1,76 @@
 /**
  * ads.js — менеджер рекламы.
  *
- * Сейчас здесь только mock-реализация (Promise, который "просмотрел" рекламу).
- * Чтобы подключить настоящую рекламу Яндекса:
+ * Архитектура (см. docs/ADS.md):
+ *   native — html2apk с -YandexAdsBridge экспонирует window.YandexAds.*
+ *            и шлёт результаты в window.__yandexAdsCallback(kind, event).
+ *   mock   — DOM-оверлей для dev-режима в браузере.
  *
- *   1. Подключи в index.html SDK Яндекс.Рекламы:
- *      <script src="https://yandex.ru/ads/system/context.js" async></script>
- *
- *   2. В функциях showInterstitialAd / showRewardedAd замени
- *      mock-блок (внутри if (mock)) на вызовы Yandex.Context.AdvManager:
- *
- *      yaContextCb.push(() => {
- *        Ya.Context.AdvManager.render({
- *          renderTo: 'yandex_rtb_R-A-XXXXX-1',
- *          blockId:  'R-A-XXXXX-1',
- *          onClose:  () => resolve({ watched: true }),
- *          onError:  () => resolve({ watched: false })
- *        });
- *      });
- *
- *   3. Для rewarded используй соответствующий блок-id и onRewarded callback.
- *
- * Все настройки частоты лежат в config.js.
+ * API (совместим с предыдущей версией):
+ *   window.AdManager.showInterstitialAd()           → Promise<{ watched: bool }>
+ *   window.AdManager.showRewardedAd(reward)         → Promise<{ watched: bool, reward }>
+ *   window.AdManager.shouldShowInterstitial(played) → bool
+ *   window.AdManager.scheduleNextAd(played) / resetCounters() / stats()
+ *   window.AdManager.getBackend()                   → 'native' | 'mock' | 'pending'
  */
 window.AdManager = (function () {
   const CFG = window.GAME_CONFIG;
+  let backend = null;                  // lazy — определяется при первом показе
+  let pendingInterstitial = null;
+  let pendingRewarded = null;
   let cardsSinceLastAd = 0;
   let nextAdAt = CFG.cardsBeforeFirstAd;
   let totalShown = 0;
 
-  function isMock() {
+  function isForcedMock() {
+    // Dev-panel может через Storage переопределить mockAds. Если такого
+    // API нет — берём значение из конфига.
     return window.Storage ? window.Storage.getMockAds() : CFG.mockAds;
   }
 
+  function ensureBackend() {
+    if (backend !== null) return;
+    if (isForcedMock()) {
+      backend = 'mock';
+      console.log('[ads] backend=mock (forced by config.mockAds / Storage)');
+      return;
+    }
+    if (window.YandexAds && typeof window.YandexAds.showInterstitial === 'function') {
+      backend = 'native';
+      setupNativeCallback();
+      console.log('[ads] backend=native (YandexAds bridge detected)');
+      // Preload первой пары реклам, чтобы первый показ был мгновенным.
+      try {
+        window.YandexAds.preloadInterstitial(CFG.unitInterstitial);
+        window.YandexAds.preloadRewarded(CFG.unitRewarded);
+      } catch (e) { console.warn('[ads] preload skipped:', e); }
+      return;
+    }
+    backend = 'mock';
+    console.log('[ads] backend=mock (window.YandexAds not present — dev browser)');
+  }
+
+  function setupNativeCallback() {
+    // Глобальный канал событий от Java-стороны:
+    //   window.__yandexAdsCallback(kind, event)
+    //     kind:  'interstitial' | 'rewarded'
+    //     event: 'closed' | 'rewarded'
+    window.__yandexAdsCallback = function (kind, event) {
+      if (kind === 'interstitial' && pendingInterstitial) {
+        const resolve = pendingInterstitial;
+        pendingInterstitial = null;
+        resolve({ watched: true });
+      }
+      if (kind === 'rewarded' && pendingRewarded) {
+        const resolve = pendingRewarded;
+        pendingRewarded = null;
+        resolve({ watched: event === 'rewarded' });
+      }
+    };
+  }
+
   /**
-   * Простой mock-баннер — рисует оверлей на 1.2 секунды и резолвится.
+   * Простой mock-баннер — рисует оверлей и резолвится.
    */
   function showMockOverlay(title, subtitle, durationMs) {
     return new Promise(resolve => {
@@ -49,7 +85,6 @@ window.AdManager = (function () {
         </div>`;
       document.body.appendChild(overlay);
 
-      // запуск анимации прогресса
       const fill = overlay.querySelector('.ad-mock-bar-fill');
       requestAnimationFrame(() => {
         fill.style.transition = `width ${durationMs}ms linear`;
@@ -70,11 +105,20 @@ window.AdManager = (function () {
    */
   function showInterstitialAd() {
     totalShown++;
-    if (isMock()) {
-      return showMockOverlay('Интерстишиал', 'Игра продолжится через мгновение…', 1200);
+    ensureBackend();
+    if (backend === 'native') {
+      return new Promise(resolve => {
+        pendingInterstitial = resolve;
+        try {
+          window.YandexAds.showInterstitial(CFG.unitInterstitial);
+        } catch (err) {
+          console.warn('[ads] native interstitial failed', err);
+          pendingInterstitial = null;
+          resolve({ watched: false });
+        }
+      });
     }
-    // === ТУТ подключи Яндекс interstitial ===
-    return Promise.resolve({ watched: true });
+    return showMockOverlay('Интерстишиал', 'Игра продолжится через мгновение…', 1200);
   }
 
   /**
@@ -83,12 +127,21 @@ window.AdManager = (function () {
    */
   function showRewardedAd(reward) {
     totalShown++;
-    if (isMock()) {
-      return showMockOverlay('Бонусная реклама', 'Спасибо за поддержку!', 1600)
-        .then(r => ({ ...r, reward: reward || true }));
+    ensureBackend();
+    if (backend === 'native') {
+      return new Promise(resolve => {
+        pendingRewarded = function (r) { resolve(Object.assign({}, r, { reward: reward || true })); };
+        try {
+          window.YandexAds.showRewarded(CFG.unitRewarded);
+        } catch (err) {
+          console.warn('[ads] native rewarded failed', err);
+          pendingRewarded = null;
+          resolve({ watched: false, reward: reward || true });
+        }
+      });
     }
-    // === ТУТ подключи Яндекс rewarded ===
-    return Promise.resolve({ watched: true, reward: reward || true });
+    return showMockOverlay('Бонусная реклама', 'Спасибо за поддержку!', 1600)
+      .then(r => Object.assign({}, r, { reward: reward || true }));
   }
 
   /**
@@ -119,7 +172,11 @@ window.AdManager = (function () {
   }
 
   function stats() {
-    return { totalShown, nextAdAt };
+    return { totalShown, nextAdAt, backend: backend || 'pending' };
+  }
+
+  function getBackend() {
+    return backend || 'pending';
   }
 
   return {
@@ -128,6 +185,7 @@ window.AdManager = (function () {
     shouldShowInterstitial,
     scheduleNextAd,
     resetCounters,
-    stats
+    stats,
+    getBackend
   };
 })();

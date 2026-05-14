@@ -16,8 +16,7 @@ window.Game = (function () {
   const state = {
     currentPlayerIdx: 0,
     players: { p1: 'Игрок 1', p2: 'Игрок 2', g1: 'female', g2: 'male' },
-    mode: 'mixed',
-    maxIntensity: 3,
+    mode: 'romance',
     cardsThisSession: 0,
     slots: [],            // [{ type, card, used }, ...]
     selectedIdx: -1,
@@ -29,7 +28,6 @@ window.Game = (function () {
   function loadFromStorage() {
     state.players = window.Storage.getPlayers();
     state.mode = window.Storage.getMode();
-    state.maxIntensity = window.Storage.getIntensity();
   }
 
   function currentPlayer() {
@@ -82,8 +80,7 @@ window.Game = (function () {
     const slots = types.map(t => {
       const card = window.CardEngine.pick({
         type: t,
-        mode: state.mode,
-        maxIntensity: state.maxIntensity
+        mode: state.mode
       });
       if (card) window.CardEngine.markSeen(card.id);
       return { type: t, card, used: false };
@@ -250,16 +247,20 @@ window.Game = (function () {
     const cur = currentPlayer();
     const cardEl = document.getElementById('card');
     cardEl.className = 'card flip-in ' + window.UI.cardClassForType(card.type);
+    const symbol = card.type === 'truth' ? '?' : '!';
     document.getElementById('card-title').textContent = card.type === 'truth' ? 'Правда' : 'Действие';
     document.getElementById('card-title').className =
       'card-title ' + (card.type === 'truth' ? 'title-truth' : 'title-dare');
     const badge = document.getElementById('card-title-badge');
-    badge.textContent = card.type === 'truth' ? '?' : '!';
+    badge.textContent = symbol;
     badge.className = 'title-badge ' + (card.type === 'truth' ? 'badge-truth' : 'badge-dare');
+    // Угловые символы — тот же знак, что и в бейдже, окрашиваются через .card-truth/.card-dare.
+    document.getElementById('card-corner-tl').textContent = symbol;
+    document.getElementById('card-corner-br').textContent = symbol;
     const cardPlayerEl = document.getElementById('card-player');
     cardPlayerEl.textContent = cur.name;
     cardPlayerEl.setAttribute('data-gender', cur.gender);
-    cardPlayerEl.className = 'with-gender-icon gender-' + cur.gender;
+    cardPlayerEl.className = 'card-player-chip with-gender-icon gender-' + cur.gender;
     document.getElementById('card-text').textContent = card.text;
 
     const replaceBtn = document.getElementById('btn-replace');
@@ -281,8 +282,7 @@ window.Game = (function () {
     // взять новую карточку того же типа
     const newCard = window.CardEngine.pick({
       type: s.type,
-      mode: state.mode,
-      maxIntensity: state.maxIntensity
+      mode: state.mode
     });
     if (!newCard) {
       window.UI.toast('Других карточек нет');
@@ -385,7 +385,7 @@ window.Game = (function () {
       if (playerEl) {
         playerEl.textContent = cur.name;
         playerEl.setAttribute('data-gender', cur.gender);
-        playerEl.className = 'with-gender-icon gender-' + cur.gender;
+        playerEl.className = 'card-player-chip with-gender-icon gender-' + cur.gender;
       }
     }
   }

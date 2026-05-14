@@ -199,63 +199,51 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 }
 
 /* ====== Режимы ====== */
-.modes-grid {
+.modes-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 .mode-btn {
-  padding: 14px 10px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
   border-radius: var(--radius-sm);
   background: rgba(10, 6, 23, 0.6);
   border: 1.5px solid var(--stroke);
   color: var(--text);
   font-weight: 600;
-  text-align: center;
+  text-align: left;
   transition: all .18s ease;
+  cursor: pointer;
+}
+.mode-btn .mode-emoji {
+  grid-row: 1 / span 2;
+  font-size: 30px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(255, 102, 166, 0.3));
+}
+.mode-btn .mode-label {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.mode-btn .mode-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.2px;
 }
 .mode-btn.selected {
-  background: linear-gradient(135deg, rgba(255, 45, 138, 0.16), rgba(155, 92, 255, 0.16));
+  background: linear-gradient(135deg, rgba(15, 196, 255, 0.16), rgba(213, 42, 255, 0.16));
   border-color: var(--neon-pink);
   color: white;
   box-shadow: var(--glow-pink);
 }
-
-/* ====== Слайдер интенсивности ====== */
-.range-row { display: grid; gap: 8px; }
-.range-row .row {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 12px;
-}
-.intensity-pill {
-  display: inline-block;
-  min-width: 30px; text-align: center;
-  background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
-  color: white;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-weight: 800;
-  box-shadow: var(--glow-pink);
-}
-input[type="range"] {
-  appearance: none; -webkit-appearance: none;
-  height: 6px; border-radius: 999px;
-  background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
-  outline: none;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 0 10px rgba(255, 45, 138, 0.9);
-  cursor: pointer;
-}
-input[type="range"]::-moz-range-thumb {
-  width: 22px; height: 22px; border: none; border-radius: 50%;
-  background: white;
-  box-shadow: 0 0 10px rgba(255, 45, 138, 0.9);
-}
+.mode-btn.selected .mode-sub { color: rgba(255, 255, 255, 0.7); }
+.mode-btn[data-mode="passion"].selected .mode-emoji { filter: drop-shadow(0 0 10px rgba(213, 42, 255, 0.95)); }
 
 /* ====== Кнопки ====== */
 .btn {
@@ -581,14 +569,41 @@ input[type="range"]::-moz-range-thumb {
     inset 0 0 20px rgba(213, 42, 255, 0.35);
   text-shadow: 0 0 14px rgba(213, 42, 255, 1), 0 0 6px rgba(255, 255, 255, 0.6);
 }
-.card-subtitle {
-  margin: 6px 0 0;
-  color: var(--text-dim);
-  font-size: 14px;
-  letter-spacing: 0.3px;
+/* Чип-метка "Чей ход" — должно быть заметно, кому выполнять карточку. */
+.card-player-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px auto 0;
+  padding: 10px 20px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: white;
+  background: rgba(10, 6, 23, 0.7);
+  border: 1.8px solid var(--neon-rose);
+  border-radius: 999px;
+  box-shadow:
+    0 0 14px rgba(255, 102, 166, 0.45),
+    inset 0 0 12px rgba(255, 102, 166, 0.18);
 }
-.card-subtitle span.gender-female { color: var(--neon-rose); text-shadow: 0 0 6px rgba(255, 102, 166, 0.45); }
-.card-subtitle span.gender-male   { color: var(--neon-cyan); text-shadow: 0 0 6px rgba(77, 214, 255, 0.45); }
+.card-player-chip.gender-male {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    0 0 14px rgba(77, 214, 255, 0.5),
+    inset 0 0 12px rgba(77, 214, 255, 0.18);
+}
+.card-player-chip::before {
+  content: "Ход";
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding-right: 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+  margin-right: 2px;
+}
 
 /* Карточка-объект (играет роль игральной карточки) */
 .card-stack {
@@ -655,22 +670,26 @@ input[type="range"]::-moz-range-thumb {
 .card.card-dare  .card-frame { border-color: rgba(231, 128, 255, 0.45); }
 .card-corner {
   position: absolute;
-  font-size: 22px;
+  font-size: 30px;
+  font-weight: 900;
+  font-style: italic;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1;
   color: var(--neon-rose);
-  text-shadow: 0 0 8px rgba(255, 102, 166, 0.7);
-  font-family: serif;
+  text-shadow: 0 0 10px rgba(255, 102, 166, 0.85), 0 0 2px currentColor;
+  -webkit-text-stroke: 0.5px currentColor;
   transition: color .25s ease, text-shadow .25s ease;
 }
 .card.card-truth .card-corner {
-  color: var(--neon-blue-soft);
-  text-shadow: 0 0 8px rgba(15, 196, 255, 0.75);
+  color: var(--neon-blue);
+  text-shadow: 0 0 10px rgba(15, 196, 255, 0.9), 0 0 2px var(--neon-blue);
 }
 .card.card-dare .card-corner {
-  color: var(--neon-red-soft);
-  text-shadow: 0 0 8px rgba(213, 42, 255, 0.75);
+  color: var(--neon-red);
+  text-shadow: 0 0 10px rgba(213, 42, 255, 0.9), 0 0 2px var(--neon-red);
 }
-.card-corner.tl { top: 14px; left: 16px; }
-.card-corner.br { bottom: 14px; right: 16px; transform: rotate(180deg); }
+.card-corner.tl { top: 12px; left: 14px; }
+.card-corner.br { bottom: 12px; right: 14px; transform: rotate(180deg); }
 
 .card .card-text {
   position: absolute;
@@ -952,7 +971,7 @@ input[type="range"]::-moz-range-thumb {
 
 /* ====== Адаптив ====== */
 @media (max-width: 350px) {
-  .modes-grid { grid-template-columns: 1fr; }
+  .modes-list { grid-template-columns: 1fr; }
   .card .card-text { font-size: 18px; }
   .circle-board {
     width: 92vw;
@@ -984,7 +1003,7 @@ input[type="range"]::-moz-range-thumb {
   .card-title-block { padding: 8px 8px 4px; }
   .card-title { font-size: 28px; }
   .title-badge { width: 48px; height: 48px; font-size: 30px; margin-bottom: 4px; }
-  .card-subtitle { font-size: 13px; }
+  .card-player-chip { font-size: 16px; padding: 8px 16px; margin-top: 8px; }
   .btn-ghost-link.below-card { font-size: 15px; padding: 11px 14px; }
   .btn-ghost-link.below-card .replace-icon { width: 16px; height: 16px; }
 }
@@ -1004,6 +1023,6 @@ input[type="range"]::-moz-range-thumb {
   .card .card-text { font-size: 15px; inset: 16px 14px; }
   .card-title { font-size: 22px; }
   .title-badge { width: 38px; height: 38px; font-size: 24px; margin-bottom: 2px; }
-  .card-subtitle { font-size: 12px; margin-top: 2px; }
+  .card-player-chip { font-size: 14px; padding: 6px 14px; margin-top: 4px; }
   .card-title-block { padding: 4px 8px 2px; }
 }

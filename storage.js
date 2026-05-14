@@ -12,7 +12,6 @@ window.Storage = (function () {
   const PREFIX = 'TOD_';
   const KEYS = {
     mode:         PREFIX + 'mode',
-    intensity:    PREFIX + 'intensity',
     seenCards:    PREFIX + 'seenCards',
     sound:        PREFIX + 'sound',
     vibration:    PREFIX + 'vibration',
@@ -60,17 +59,13 @@ window.Storage = (function () {
   }
 
   // === Режим ===
-  function getMode() { return get(KEYS.mode, 'mixed'); }
+  function getMode() {
+    const m = get(KEYS.mode, 'romance');
+    // Миграция со старых названий режимов на актуальные три.
+    if (!['romance', 'flirt', 'passion'].includes(m)) return 'romance';
+    return m;
+  }
   function setMode(mode) { set(KEYS.mode, mode); }
-
-  // === Интенсивность ===
-  function getIntensity() {
-    return get(KEYS.intensity, window.GAME_CONFIG.defaultMaxIntensity);
-  }
-  function setIntensity(level) {
-    const lvl = Math.max(1, Math.min(5, parseInt(level, 10) || 3));
-    set(KEYS.intensity, lvl);
-  }
 
   // === Просмотренные карточки ===
   function getSeenCards() { return get(KEYS.seenCards, []); }
@@ -106,7 +101,6 @@ window.Storage = (function () {
     get, set, remove,
     getPlayers, setPlayers,
     getMode, setMode,
-    getIntensity, setIntensity,
     getSeenCards, addSeenCard, resetSeenCards,
     getSound, setSound, getVibration, setVibration,
     isOnboarded, setOnboarded,
