@@ -598,17 +598,35 @@ input[type="range"]::-moz-range-thumb {
   letter-spacing: 0.6px;
 }
 .btn-ghost-link.below-card {
-  margin-top: 6px;
-  padding: 10px;
-  font-size: 13px;
+  margin-top: 10px;
+  padding: 13px 16px;
+  font-size: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
 }
+.btn-ghost-link.below-card .replace-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+/* "Заменить" сохраняет место в макете даже когда скрыта,
+   чтобы карточка и кнопка "Выполнено" не дёргались. */
+#btn-replace.hidden {
+  display: inline-flex !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .card-actions {
   position: fixed;
-  bottom: 28px;
+  top: calc(75% + 65px);
   left: 50%;
-  transform: translateX(-50%);
-  width: calc(100vw - 36px);
-  max-width: 504px;
+  transform: translate(-50%, -50%);
+  width: min(240px, 70vw);
   display: flex; flex-direction: column;
   gap: 4px;
 }
