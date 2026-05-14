@@ -32,8 +32,6 @@ window.Game = (function () {
     state.maxIntensity = window.Storage.getIntensity();
   }
 
-  function genderIcon(g) { return g === 'male' ? '♂' : '♀'; }
-
   function currentPlayer() {
     return state.currentPlayerIdx === 0
       ? { name: state.players.p1, gender: state.players.g1 }
@@ -136,10 +134,14 @@ window.Game = (function () {
     const cur = currentPlayer();
     const other = otherPlayer();
     document.getElementById('turn-count').textContent = (state.cardsThisSession + 1);
-    document.getElementById('bottle-current').textContent = cur.name + ' ' + genderIcon(cur.gender);
-    document.getElementById('bottle-current').className = 'player-chip glow gender-' + cur.gender;
-    document.getElementById('bottle-other').textContent = other.name + ' ' + genderIcon(other.gender);
-    document.getElementById('bottle-other').className = 'player-chip dim gender-' + other.gender;
+    const curEl = document.getElementById('bottle-current');
+    curEl.textContent = cur.name;
+    curEl.setAttribute('data-gender', cur.gender);
+    curEl.className = 'player-chip glow with-gender-icon gender-' + cur.gender;
+    const otherEl = document.getElementById('bottle-other');
+    otherEl.textContent = other.name;
+    otherEl.setAttribute('data-gender', other.gender);
+    otherEl.className = 'player-chip dim with-gender-icon gender-' + other.gender;
   }
 
   function showBottleStage() {
@@ -208,8 +210,10 @@ window.Game = (function () {
     const badge = document.getElementById('card-title-badge');
     badge.textContent = card.type === 'truth' ? '?' : '!';
     badge.className = 'title-badge ' + (card.type === 'truth' ? 'badge-truth' : 'badge-dare');
-    document.getElementById('card-player').textContent = cur.name + ' ' + genderIcon(cur.gender);
-    document.getElementById('card-player').className = 'gender-' + cur.gender;
+    const cardPlayerEl = document.getElementById('card-player');
+    cardPlayerEl.textContent = cur.name;
+    cardPlayerEl.setAttribute('data-gender', cur.gender);
+    cardPlayerEl.className = 'with-gender-icon gender-' + cur.gender;
     document.getElementById('card-text').textContent = card.text;
 
     const replaceBtn = document.getElementById('btn-replace');
@@ -333,8 +337,9 @@ window.Game = (function () {
       const cur = currentPlayer();
       const playerEl = document.getElementById('card-player');
       if (playerEl) {
-        playerEl.textContent = cur.name + ' ' + genderIcon(cur.gender);
-        playerEl.className = 'gender-' + cur.gender;
+        playerEl.textContent = cur.name;
+        playerEl.setAttribute('data-gender', cur.gender);
+        playerEl.className = 'with-gender-icon gender-' + cur.gender;
       }
     }
   }

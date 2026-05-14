@@ -173,12 +173,17 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 .gender-btn {
   width: 44px; height: 44px;
   border-radius: 12px;
-  font-size: 22px;
+  font-size: 24px;
+  font-weight: 900;
   background: rgba(10, 6, 23, 0.55);
   border: 1.5px solid var(--stroke);
   color: var(--text-dim);
   transition: all .15s ease;
   display: inline-flex; align-items: center; justify-content: center;
+  /* Жирные ♀/♂: stroke + shadow, чтобы Unicode-символы выглядели толще,
+     т.к. font-weight большинство шрифтов на них игнорирует. */
+  -webkit-text-stroke: 1.6px currentColor;
+  text-shadow: 0 0 1px currentColor;
 }
 .gender-btn[data-gender="female"] { color: var(--neon-rose); }
 .gender-btn[data-gender="male"]   { color: var(--neon-cyan); }
@@ -379,6 +384,26 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 14px rgba(77, 214, 255, 0.55), inset 0 0 10px rgba(77, 214, 255, 0.18);
 }
 .player-chip.dim { opacity: 0.55; color: var(--text-dim); }
+
+/* Жирный гендер-знак после имени игрока (на чипах хода и в подзаголовке карточки). */
+.with-gender-icon { display: inline-flex; align-items: baseline; gap: 6px; }
+.with-gender-icon::after {
+  font-weight: 900;
+  font-size: 1.05em;
+  -webkit-text-stroke: 1.4px currentColor;
+  text-shadow: 0 0 1px currentColor;
+  line-height: 1;
+}
+.with-gender-icon[data-gender="female"]::after {
+  content: "♀";
+  color: var(--neon-rose);
+  text-shadow: 0 0 1px var(--neon-rose), 0 0 8px rgba(255, 102, 166, 0.55);
+}
+.with-gender-icon[data-gender="male"]::after {
+  content: "♂";
+  color: var(--neon-cyan);
+  text-shadow: 0 0 1px var(--neon-cyan), 0 0 8px rgba(77, 214, 255, 0.55);
+}
 
 /* ===== Круг с 12 карточками ===== */
 .circle-board {
