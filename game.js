@@ -153,11 +153,31 @@ window.Game = (function () {
     document.querySelectorAll('.slot').forEach(el => el.classList.remove('highlight','ghost-highlight'));
   }
 
-  /* ===== Бутылочка ===== */
-  // Длительности этапов — править здесь, если захочется быстрее/медленнее.
-  const SPIN_STAGE1_MS = 1500; // ровно 5 оборотов с постоянной скоростью
-  const SPIN_STAGE2_MS = 1100; // ещё один оборот с замедлением до случайного угла
+  /* ===== Бутылочка =====
+   * Физика вращения:
+   *   Стадия 1 — равномерная угловая скорость ω0 (deg/ms),
+   *              делает ровно SPIN_FIXED_TURNS полных оборотов.
+   *              Длительность = SPIN_FIXED_TURNS*360 / ω0.
+   *   Стадия 2 — равноускоренное замедление от ω0 до 0 за случайное
+   *              время T2 ∈ [DECEL_MIN_MS, DECEL_MAX_MS].
+   *              Пройденный за стадию угол = ω0 * T2 / 2 → в среднем
+   *              ~1 оборот, иногда чуть меньше, иногда чуть больше.
+   *
+   * Реализация: две последовательные CSS-transition.
+   *   Стадия 1 — linear (точно постоянная скорость).
+   *   Стадия 2 — cubic-bezier(0.25, 0.5, 0.5, 1). Это аппроксимирует
+   *              easeOutQuad (квадратичная кривая = равномерное замедление).
+   *              Начальный наклон кривой = 2 → начальная угловая скорость
+   *              в стадии 2 точно равна ω0, без рывка на стыке.
+   *              Финальный наклон = 0 → плавная остановка без «вкопанной».
+   *
+   * Подкрути значения ниже, если захочется быстрее/медленнее.
+   */
   const SPIN_FIXED_TURNS = 5;
+  const SPIN_OMEGA_DEG_PER_MS = 0.84; // ~840°/с ≈ 2.33 об/с
+  const DECEL_MIN_MS = 600;           // быстрее → меньше доворот (~0.7 оборота)
+  const DECEL_MAX_MS = 1100;          // медленнее → больше доворот (~1.3 оборота)
+  const DECEL_BEZIER = 'cubic-bezier(0.25, 0.5, 0.5, 1)'; // easeOutQuad
 
   function spinBottle() {
     if (state.spinning) return;
@@ -167,30 +187,35 @@ window.Game = (function () {
     const svg = document.querySelector('#bottle .bottle-svg');
     const baseAngle = state.bottleAngle;
 
-    // Этап 1: ровно 5 оборотов с почти линейным таймингом.
-    const stage1Final = baseAngle + SPIN_FIXED_TURNS * 360;
-    // Этап 2: ещё один полный оборот + случайный угол, ease-out.
-    const stage2Delta = 360 + Math.floor(Math.random() * 360);
-    const stage2Final = stage1Final + stage2Delta;
+    const omega = SPIN_OMEGA_DEG_PER_MS;
+    const stage1Dist = SPIN_FIXED_TURNS * 360;
+    const stage1Dur = stage1Dist / omega; // ≈ 2143 ms
+
+    const stage2Dur = DECEL_MIN_MS + Math.random() * (DECEL_MAX_MS - DECEL_MIN_MS);
+    // Для постоянного замедления: путь = ω0 * T2 / 2.
+    const stage2Dist = omega * stage2Dur / 2;
+
+    const stage1Final = baseAngle + stage1Dist;
+    const stage2Final = stage1Final + stage2Dist;
     state.bottleAngle = stage2Final;
 
-    svg.style.transition = 'transform ' + SPIN_STAGE1_MS + 'ms linear';
+    // Стадия 1 — равномерное вращение.
+    svg.style.transition = 'transform ' + stage1Dur + 'ms linear';
     svg.style.transform = 'rotate(' + stage1Final + 'deg)';
     window.AudioFX.flip();
     document.getElementById('bottle').classList.add('spinning');
 
-    // Переключаемся на ease-out на этапе 2.
+    // Стадия 2 — плавное замедление до нуля.
     setTimeout(() => {
-      svg.style.transition = 'transform ' + SPIN_STAGE2_MS + 'ms cubic-bezier(0.15, 0.7, 0.2, 1)';
+      svg.style.transition = 'transform ' + stage2Dur + 'ms ' + DECEL_BEZIER;
       svg.style.transform = 'rotate(' + stage2Final + 'deg)';
-    }, SPIN_STAGE1_MS);
+    }, stage1Dur);
 
     // Резолвим слот по итогам обоих этапов.
     setTimeout(async () => {
       document.getElementById('bottle').classList.remove('spinning');
       state.spinning = false;
       let idx = resolveSlotFromAngle(state.bottleAngle);
-      // walk clockwise через сыгранные карточки
       let safety = 0;
       while (state.slots[idx].used && safety < TOTAL_SLOTS) {
         highlightSlot(idx, true);
@@ -202,11 +227,10 @@ window.Game = (function () {
       state.selectedIdx = idx;
       await wait(360);
       // Реклама — после того как бутылочка выбрала карточку,
-      // но до того как её прочитают. Так контракт прочитанной
-      // карточки не разрывается.
+      // но до того как её прочитают.
       await maybeShowInterstitial();
       revealCurrentSlot();
-    }, SPIN_STAGE1_MS + SPIN_STAGE2_MS);
+    }, stage1Dur + stage2Dur);
   }
 
   function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
