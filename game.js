@@ -130,7 +130,6 @@ window.Game = (function () {
   function renderTurnHeader() {
     const cur = currentPlayer();
     const other = otherPlayer();
-    document.getElementById('turn-count').textContent = (state.cardsThisSession + 1);
     const curEl = document.getElementById('bottle-current');
     curEl.textContent = cur.name;
     curEl.setAttribute('data-gender', cur.gender);

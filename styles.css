@@ -318,20 +318,9 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 
 /* ====== Игровой экран ====== */
 .game-head {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex; justify-content: flex-end; align-items: center;
   padding-left: 50px;
   gap: 8px;
-}
-.turns-counter {
-  font-size: 13px;
-  color: var(--text-dim);
-  letter-spacing: 0.4px;
-}
-.turns-counter b {
-  color: var(--neon-rose);
-  font-weight: 800;
-  font-size: 16px;
-  text-shadow: 0 0 8px rgba(255, 102, 166, 0.55);
 }
 .game-head .end-btn {
   background: transparent;
@@ -1028,8 +1017,6 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   .player-chip { font-size: 11px; padding: 5px 10px; }
   .bottle-hint { font-size: 10px; }
   .game-head { padding-left: 44px; }
-  .turns-counter { font-size: 11px; }
-  .turns-counter b { font-size: 13px; }
 
   .card-stack { padding-bottom: 72px; }
   .card { min-height: 160px; padding: 14px 16px 12px; }
