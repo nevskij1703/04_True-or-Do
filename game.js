@@ -154,20 +154,38 @@ window.Game = (function () {
   }
 
   /* ===== Бутылочка ===== */
+  // Длительности этапов — править здесь, если захочется быстрее/медленнее.
+  const SPIN_STAGE1_MS = 1500; // ровно 5 оборотов с постоянной скоростью
+  const SPIN_STAGE2_MS = 1100; // ещё один оборот с замедлением до случайного угла
+  const SPIN_FIXED_TURNS = 5;
+
   function spinBottle() {
     if (state.spinning) return;
     if (allUsed()) return;
     state.spinning = true;
 
     const svg = document.querySelector('#bottle .bottle-svg');
-    const turns = 4 + Math.floor(Math.random() * 3);
-    const delta = turns * 360 + Math.floor(Math.random() * 360);
-    state.bottleAngle += delta;
-    svg.style.transition = 'transform 2.6s cubic-bezier(0.18, 0.74, 0.22, 1)';
-    svg.style.transform = 'rotate(' + state.bottleAngle + 'deg)';
+    const baseAngle = state.bottleAngle;
+
+    // Этап 1: ровно 5 оборотов с почти линейным таймингом.
+    const stage1Final = baseAngle + SPIN_FIXED_TURNS * 360;
+    // Этап 2: ещё один полный оборот + случайный угол, ease-out.
+    const stage2Delta = 360 + Math.floor(Math.random() * 360);
+    const stage2Final = stage1Final + stage2Delta;
+    state.bottleAngle = stage2Final;
+
+    svg.style.transition = 'transform ' + SPIN_STAGE1_MS + 'ms linear';
+    svg.style.transform = 'rotate(' + stage1Final + 'deg)';
     window.AudioFX.flip();
     document.getElementById('bottle').classList.add('spinning');
 
+    // Переключаемся на ease-out на этапе 2.
+    setTimeout(() => {
+      svg.style.transition = 'transform ' + SPIN_STAGE2_MS + 'ms cubic-bezier(0.15, 0.7, 0.2, 1)';
+      svg.style.transform = 'rotate(' + stage2Final + 'deg)';
+    }, SPIN_STAGE1_MS);
+
+    // Резолвим слот по итогам обоих этапов.
     setTimeout(async () => {
       document.getElementById('bottle').classList.remove('spinning');
       state.spinning = false;
@@ -188,7 +206,7 @@ window.Game = (function () {
       // карточки не разрывается.
       await maybeShowInterstitial();
       revealCurrentSlot();
-    }, 2700);
+    }, SPIN_STAGE1_MS + SPIN_STAGE2_MS);
   }
 
   function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
