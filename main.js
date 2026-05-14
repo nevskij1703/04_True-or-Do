@@ -151,9 +151,18 @@
     sound.checked = window.Storage.getSound();
     vibration.checked = window.Storage.getVibration();
 
-    fab.addEventListener('click', () => {
+    function hydrateSettings() {
       sound.checked = window.Storage.getSound();
       vibration.checked = window.Storage.getVibration();
+      const p = window.Storage.getPlayers();
+      $('set-p1').value = p.p1;
+      $('set-p2').value = p.p2;
+      selectSettingsGender(1, p.g1);
+      selectSettingsGender(2, p.g2);
+    }
+
+    fab.addEventListener('click', () => {
+      hydrateSettings();
       modal.classList.remove('hidden');
       requestAnimationFrame(() => modal.classList.add('show'));
     });
@@ -170,6 +179,51 @@
 
     sound.addEventListener('change', e => window.Storage.setSound(e.target.checked));
     vibration.addEventListener('change', e => window.Storage.setVibration(e.target.checked));
+
+    // Имена + пол в настройках — сохраняем и обновляем игру на лету
+    ['set-p1', 'set-p2'].forEach(id => {
+      $(id).addEventListener('input', saveSettingsPlayers);
+    });
+    document.querySelectorAll('.gender-btn[data-set-player]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const num = btn.dataset.setPlayer;
+        document
+          .querySelectorAll('.gender-btn[data-set-player="' + num + '"]')
+          .forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        saveSettingsPlayers();
+      });
+    });
+  }
+
+  function selectSettingsGender(playerNum, gender) {
+    document
+      .querySelectorAll('.gender-btn[data-set-player="' + playerNum + '"]')
+      .forEach(b => b.classList.toggle('selected', b.dataset.gender === gender));
+  }
+
+  function readSettingsGender(playerNum) {
+    const sel = document.querySelector(
+      '.gender-btn[data-set-player="' + playerNum + '"].selected'
+    );
+    return sel ? sel.dataset.gender : (playerNum === 1 ? 'female' : 'male');
+  }
+
+  function saveSettingsPlayers() {
+    const p1 = $('set-p1').value.trim() || 'Игрок 1';
+    const p2 = $('set-p2').value.trim() || 'Игрок 2';
+    const g1 = readSettingsGender(1);
+    const g2 = readSettingsGender(2);
+    window.Storage.setPlayers(p1, p2, g1, g2);
+    // Если игра уже идёт — обновим шапку и карточку
+    if (window.Game && typeof window.Game.refresh === 'function') {
+      window.Game.refresh();
+    }
+    // Подтянуть тот же контент в инпуты на главной — чтобы не разъезжалось
+    if ($('input-p1')) $('input-p1').value = p1;
+    if ($('input-p2')) $('input-p2').value = p2;
+    selectGender(1, g1);
+    selectGender(2, g2);
   }
 
   /* ====== Dev-панель ====== */

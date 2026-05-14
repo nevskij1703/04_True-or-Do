@@ -11,18 +11,23 @@
   --neon-purple: #9b5cff;
   --neon-cyan: #4dd6ff;
   --neon-rose: #ff66a6;
+  /* Truth = синий, Dare = красный (см. ТЗ по цветам). */
+  --neon-blue: #4d9bff;
+  --neon-blue-soft: #8ec3ff;
+  --neon-red: #ff3656;
+  --neon-red-soft: #ff7e93;
   --text: #f6e9f2;
   --text-dim: #b39bc9;
   --glass: rgba(255, 255, 255, 0.045);
   --glass-strong: rgba(255, 255, 255, 0.08);
   --stroke: rgba(255, 102, 166, 0.32);
   --stroke-strong: rgba(255, 102, 166, 0.55);
-  --truth-pink: #ff2d8a;
-  --dare-purple: #9b5cff;
   --radius: 22px;
   --radius-sm: 14px;
   --glow-pink: 0 0 12px rgba(255, 45, 138, 0.55), 0 0 28px rgba(255, 45, 138, 0.35);
   --glow-purple: 0 0 14px rgba(155, 92, 255, 0.55), 0 0 30px rgba(155, 92, 255, 0.30);
+  --glow-blue: 0 0 12px rgba(77, 155, 255, 0.6), 0 0 28px rgba(77, 155, 255, 0.35);
+  --glow-red:  0 0 12px rgba(255, 54, 86, 0.6),  0 0 28px rgba(255, 54, 86, 0.35);
 }
 
 * { box-sizing: border-box; }
@@ -400,14 +405,14 @@ input[type="range"]::-moz-range-thumb {
   transition: transform .25s ease, box-shadow .25s ease, background .25s ease, opacity .25s ease;
 }
 .slot.slot-truth {
-  background: linear-gradient(135deg, rgba(255, 45, 138, 0.85), rgba(255, 102, 166, 0.7));
-  box-shadow: 0 0 10px rgba(255, 45, 138, 0.55), inset 0 0 8px rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 102, 166, 0.85);
+  background: linear-gradient(135deg, rgba(77, 155, 255, 0.88), rgba(142, 195, 255, 0.72));
+  box-shadow: 0 0 10px rgba(77, 155, 255, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(142, 195, 255, 0.9);
 }
 .slot.slot-dare {
-  background: linear-gradient(135deg, rgba(155, 92, 255, 0.85), rgba(122, 77, 255, 0.7));
-  box-shadow: 0 0 10px rgba(155, 92, 255, 0.55), inset 0 0 8px rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(155, 92, 255, 0.85);
+  background: linear-gradient(135deg, rgba(255, 54, 86, 0.88), rgba(255, 126, 147, 0.72));
+  box-shadow: 0 0 10px rgba(255, 54, 86, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 126, 147, 0.9);
 }
 .slot.used {
   background: rgba(255, 255, 255, 0.03);
@@ -427,16 +432,16 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
   color: white;
 }
-.slot-letter {
-  text-shadow: 0 0 6px rgba(0,0,0,0.4);
-  font-family: -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
-}
-.slot-heart {
-  position: absolute;
-  top: 3px; right: 6px;
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.6);
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+.slot-symbol {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  color: white;
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 0.45),
+    0 0 12px rgba(255, 255, 255, 0.55);
 }
 .slot-arrow-svg {
   width: 24px; height: 24px;
@@ -488,19 +493,59 @@ input[type="range"]::-moz-range-thumb {
   font-size: 38px;
   font-weight: 900;
   letter-spacing: 0.8px;
-  background: linear-gradient(135deg, var(--neon-pink), var(--neon-magenta));
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-blue-soft));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 18px rgba(255, 45, 138, 0.35);
-  filter: drop-shadow(0 0 10px rgba(255, 45, 138, 0.45));
+  text-shadow: 0 0 18px rgba(77, 155, 255, 0.35);
+  filter: drop-shadow(0 0 10px rgba(77, 155, 255, 0.45));
 }
-.card-title.title-dare {
-  background: linear-gradient(135deg, var(--neon-purple), #c5a7ff);
+.card-title.title-truth {
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-blue-soft));
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 0 18px rgba(155, 92, 255, 0.4);
-  filter: drop-shadow(0 0 10px rgba(155, 92, 255, 0.45));
+  text-shadow: 0 0 18px rgba(77, 155, 255, 0.4);
+  filter: drop-shadow(0 0 10px rgba(77, 155, 255, 0.45));
+}
+.card-title.title-dare {
+  background: linear-gradient(135deg, var(--neon-red), var(--neon-red-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 0 18px rgba(255, 54, 86, 0.4);
+  filter: drop-shadow(0 0 10px rgba(255, 54, 86, 0.45));
+}
+
+/* Бейдж с символом "?" (Правда) или "!" (Действие) над заголовком */
+.title-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px; height: 64px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 42px;
+  line-height: 1;
+  border: 2px solid currentColor;
+  transition: color .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.title-badge.badge-truth {
+  color: var(--neon-blue);
+  background: radial-gradient(circle at 50% 30%, rgba(77, 155, 255, 0.28), rgba(77, 155, 255, 0.06));
+  box-shadow:
+    0 0 18px rgba(77, 155, 255, 0.55),
+    inset 0 0 16px rgba(77, 155, 255, 0.22);
+  text-shadow: 0 0 10px rgba(77, 155, 255, 0.9), 0 0 4px rgba(255, 255, 255, 0.5);
+}
+.title-badge.badge-dare {
+  color: var(--neon-red);
+  background: radial-gradient(circle at 50% 30%, rgba(255, 54, 86, 0.28), rgba(255, 54, 86, 0.06));
+  box-shadow:
+    0 0 18px rgba(255, 54, 86, 0.55),
+    inset 0 0 16px rgba(255, 54, 86, 0.22);
+  text-shadow: 0 0 10px rgba(255, 54, 86, 0.9), 0 0 4px rgba(255, 255, 255, 0.5);
 }
 .card-subtitle {
   margin: 6px 0 0;
@@ -539,20 +584,26 @@ input[type="range"]::-moz-range-thumb {
   color: var(--text);
 }
 .card.card-truth {
-  border-color: rgba(255, 45, 138, 0.55);
+  border-color: rgba(77, 155, 255, 0.55);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 18px 50px rgba(0, 0, 0, 0.55),
-    0 0 22px rgba(255, 45, 138, 0.45),
-    0 0 42px rgba(255, 45, 138, 0.28);
+    0 0 22px rgba(77, 155, 255, 0.45),
+    0 0 42px rgba(77, 155, 255, 0.28);
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(77, 155, 255, 0.18), transparent 70%),
+    linear-gradient(170deg, rgba(28, 12, 52, 0.92), rgba(15, 6, 32, 0.92));
 }
 .card.card-dare {
-  border-color: rgba(155, 92, 255, 0.55);
+  border-color: rgba(255, 54, 86, 0.55);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 18px 50px rgba(0, 0, 0, 0.55),
-    0 0 22px rgba(155, 92, 255, 0.45),
-    0 0 42px rgba(155, 92, 255, 0.28);
+    0 0 22px rgba(255, 54, 86, 0.45),
+    0 0 42px rgba(255, 54, 86, 0.28);
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 54, 86, 0.18), transparent 70%),
+    linear-gradient(170deg, rgba(28, 12, 52, 0.92), rgba(15, 6, 32, 0.92));
 }
 .card-frame {
   position: absolute;
@@ -560,13 +611,25 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 18px;
   border: 1px dashed rgba(255, 102, 166, 0.4);
   pointer-events: none;
+  transition: border-color .25s ease;
 }
+.card.card-truth .card-frame { border-color: rgba(142, 195, 255, 0.45); }
+.card.card-dare  .card-frame { border-color: rgba(255, 126, 147, 0.45); }
 .card-corner {
   position: absolute;
   font-size: 22px;
   color: var(--neon-rose);
   text-shadow: 0 0 8px rgba(255, 102, 166, 0.7);
   font-family: serif;
+  transition: color .25s ease, text-shadow .25s ease;
+}
+.card.card-truth .card-corner {
+  color: var(--neon-blue-soft);
+  text-shadow: 0 0 8px rgba(77, 155, 255, 0.75);
+}
+.card.card-dare .card-corner {
+  color: var(--neon-red-soft);
+  text-shadow: 0 0 8px rgba(255, 54, 86, 0.75);
 }
 .card-corner.tl { top: 14px; left: 16px; }
 .card-corner.br { bottom: 14px; right: 16px; transform: rotate(180deg); }
@@ -788,6 +851,23 @@ input[type="range"]::-moz-range-thumb {
   color: var(--text-dim);
   text-align: center;
 }
+.settings-section {
+  margin: 16px 0 4px;
+}
+.settings-section h4 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.settings-section h4::before {
+  content: "♥";
+  color: var(--neon-pink);
+  margin-right: 6px;
+  text-shadow: 0 0 6px rgba(255, 45, 138, 0.8);
+}
 
 /* ====== Конец партии ====== */
 .end-card { text-align: center; }
@@ -853,11 +933,51 @@ input[type="range"]::-moz-range-thumb {
     --radius: 112px;
     --slot-size: 46px;
   }
-  .slot { font-size: 18px; }
+  .slot .slot-symbol { font-size: 26px; }
   .bottle-btn { width: 96px; height: 168px; }
   .card-title { font-size: 32px; }
 }
 @media (min-height: 760px) {
   .circle-board { --radius: 144px; --slot-size: 56px; }
   .bottle-btn { width: 120px; height: 210px; }
+}
+
+/* Короткие экраны (поджимаем высоту) */
+@media (max-height: 720px) {
+  .screen { padding-top: 16px; padding-bottom: 18px; }
+  .neon-title { font-size: 26px; }
+  .circle-board { --radius: 108px; --slot-size: 44px; }
+  .slot .slot-symbol { font-size: 26px; }
+  .bottle-btn { width: 92px; height: 158px; }
+  .bottle-stage { gap: 4px; }
+  .player-chip { font-size: 13px; padding: 6px 12px; }
+  .bottle-hint { font-size: 11px; }
+
+  .card { min-height: 200px; padding: 16px 18px 12px; }
+  .card .card-text { font-size: 17px; padding: 8px 4px; min-height: 80px; }
+  .card-title-block { padding: 8px 8px 4px; }
+  .card-title { font-size: 28px; }
+  .title-badge { width: 48px; height: 48px; font-size: 30px; margin-bottom: 4px; }
+  .card-subtitle { font-size: 13px; }
+  .btn-ghost-link.below-card { font-size: 15px; padding: 11px 14px; }
+  .btn-ghost-link.below-card .replace-icon { width: 16px; height: 16px; }
+}
+@media (max-height: 580px) {
+  .neon-title { font-size: 22px; }
+  .circle-board { --radius: 88px; --slot-size: 40px; }
+  .slot .slot-symbol { font-size: 22px; }
+  .bottle-btn { width: 76px; height: 130px; }
+  .bottle-stage { gap: 2px; }
+  .player-chip { font-size: 11px; padding: 5px 10px; }
+  .bottle-hint { font-size: 10px; }
+  .game-head { padding-left: 44px; }
+  .turns-counter { font-size: 11px; }
+  .turns-counter b { font-size: 13px; }
+
+  .card { min-height: 140px; padding: 12px 14px 8px; }
+  .card .card-text { font-size: 15px; padding: 4px 2px; min-height: 60px; }
+  .card-title { font-size: 22px; }
+  .title-badge { width: 38px; height: 38px; font-size: 24px; margin-bottom: 2px; }
+  .card-subtitle { font-size: 12px; margin-top: 2px; }
+  .card-title-block { padding: 4px 8px 2px; }
 }

@@ -87,9 +87,8 @@ window.Game = (function () {
             <path d="M5 12 H17 M13 7 L18 12 L13 17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>`;
       } else {
-        div.innerHTML = `
-          <span class="slot-letter">${s.type === 'truth' ? 'П' : 'Д'}</span>
-          <span class="slot-heart">♥</span>`;
+        const sym = s.type === 'truth' ? '?' : '!';
+        div.innerHTML = `<span class="slot-symbol">${sym}</span>`;
       }
       host.appendChild(div);
     });
@@ -185,6 +184,9 @@ window.Game = (function () {
     document.getElementById('card-title').textContent = card.type === 'truth' ? 'Правда' : 'Действие';
     document.getElementById('card-title').className =
       'card-title ' + (card.type === 'truth' ? 'title-truth' : 'title-dare');
+    const badge = document.getElementById('card-title-badge');
+    badge.textContent = card.type === 'truth' ? '?' : '!';
+    badge.className = 'title-badge ' + (card.type === 'truth' ? 'badge-truth' : 'badge-dare');
     document.getElementById('card-player').textContent = cur.name + ' ' + genderIcon(cur.gender);
     document.getElementById('card-player').className = 'gender-' + cur.gender;
     document.getElementById('card-text').textContent = card.text;
@@ -299,6 +301,24 @@ window.Game = (function () {
     window.UI.show('screen-home');
   }
 
+  /**
+   * Перезагрузить игроков из Storage и перерисовать всё, что от них зависит.
+   * Вызывается из main.js, когда пользователь меняет имя/пол в модалке настроек,
+   * чтобы игровой экран обновился на лету.
+   */
+  function refresh() {
+    state.players = window.Storage.getPlayers();
+    renderTurnHeader();
+    if (state.currentCard) {
+      const cur = currentPlayer();
+      const playerEl = document.getElementById('card-player');
+      if (playerEl) {
+        playerEl.textContent = cur.name + ' ' + genderIcon(cur.gender);
+        playerEl.className = 'gender-' + cur.gender;
+      }
+    }
+  }
+
   return {
     start, endGame,
     spinBottle,
@@ -306,6 +326,7 @@ window.Game = (function () {
     replaceCurrent,
     playAgain,
     backHome,
+    refresh,
     _state: state
   };
 })();

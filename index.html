@@ -8,7 +8,7 @@
   <meta http-equiv="pragma" content="no-cache" />
   <meta http-equiv="expires" content="0" />
   <title>Правда или Действие — для пар</title>
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
 
@@ -134,6 +134,7 @@
     <!-- ===== Сцена с карточкой ===== -->
     <div id="card-view" class="card-view hidden">
       <div class="card-title-block">
+        <div class="title-badge badge-truth" id="card-title-badge" aria-hidden="true">?</div>
         <h1 class="card-title" id="card-title">Правда</h1>
         <p class="card-subtitle">Ход: <span id="card-player">—</span></p>
       </div>
@@ -168,14 +169,37 @@
     <div class="modal-box solid">
       <button id="settings-close" class="modal-close" aria-label="Закрыть">×</button>
       <h2 class="modal-title">Настройки</h2>
-      <label class="toggle">
-        <span>Звук эффектов</span>
-        <input type="checkbox" id="sound-toggle" />
-      </label>
-      <label class="toggle">
-        <span>Вибрация</span>
-        <input type="checkbox" id="vibration-toggle" />
-      </label>
+
+      <div class="settings-section">
+        <h4>Игроки</h4>
+        <div class="player-row">
+          <input id="set-p1" class="input" type="text" placeholder="Имя первого игрока" maxlength="20" />
+          <div class="gender-pick">
+            <button class="gender-btn" data-set-player="1" data-gender="female" aria-label="Женский">♀</button>
+            <button class="gender-btn" data-set-player="1" data-gender="male"   aria-label="Мужской">♂</button>
+          </div>
+        </div>
+        <div class="player-row">
+          <input id="set-p2" class="input" type="text" placeholder="Имя второго игрока" maxlength="20" />
+          <div class="gender-pick">
+            <button class="gender-btn" data-set-player="2" data-gender="female" aria-label="Женский">♀</button>
+            <button class="gender-btn" data-set-player="2" data-gender="male"   aria-label="Мужской">♂</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h4>Звук и вибрация</h4>
+        <label class="toggle">
+          <span>Звук эффектов</span>
+          <input type="checkbox" id="sound-toggle" />
+        </label>
+        <label class="toggle">
+          <span>Вибрация</span>
+          <input type="checkbox" id="vibration-toggle" />
+        </label>
+      </div>
+
       <p class="modal-hint">Любую карточку можно заменить один раз. Играйте по согласию ♥</p>
     </div>
   </div>
@@ -192,14 +216,14 @@
   </div>
 
   <!-- ================= Скрипты ================= -->
-  <script src="config.js?v=5"></script>
-  <script src="storage.js?v=5"></script>
-  <script src="cards.js?v=5"></script>
-  <script src="cardEngine.js?v=5"></script>
-  <script src="ads.js?v=5"></script>
-  <script src="audio.js?v=5"></script>
-  <script src="ui.js?v=5"></script>
-  <script src="game.js?v=5"></script>
-  <script src="main.js?v=5"></script>
+  <script src="config.js?v=6"></script>
+  <script src="storage.js?v=6"></script>
+  <script src="cards.js?v=6"></script>
+  <script src="cardEngine.js?v=6"></script>
+  <script src="ads.js?v=6"></script>
+  <script src="audio.js?v=6"></script>
+  <script src="ui.js?v=6"></script>
+  <script src="game.js?v=6"></script>
+  <script src="main.js?v=6"></script>
 </body>
 </html>
