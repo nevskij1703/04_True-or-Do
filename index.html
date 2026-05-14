@@ -135,20 +135,22 @@
         <p class="card-subtitle">Ход: <span id="card-player">—</span></p>
       </div>
 
-      <div id="card" class="card">
-        <span class="card-corner tl" aria-hidden="true">♥</span>
-        <span class="card-corner br" aria-hidden="true">♥</span>
-        <div class="card-frame"></div>
-        <div class="card-text" id="card-text">…</div>
-        <div class="card-foot">
-          <span class="cat-tag" id="card-category">флирт</span>
+      <div class="card-stack">
+        <div id="card" class="card">
+          <span class="card-corner tl" aria-hidden="true">♥</span>
+          <span class="card-corner br" aria-hidden="true">♥</span>
+          <div class="card-frame"></div>
+          <div class="card-text" id="card-text">…</div>
+          <div class="card-foot">
+            <span class="cat-tag" id="card-category">флирт</span>
+          </div>
+          <div class="consent" id="card-consent"></div>
         </div>
-        <div class="consent" id="card-consent"></div>
+        <button id="btn-replace" class="btn-ghost-link below-card">Заменить</button>
       </div>
 
       <div class="card-actions">
-        <button id="btn-done"    class="btn btn-neon">Выполнено</button>
-        <button id="btn-replace" class="btn-ghost-link">Заменить</button>
+        <button id="btn-done" class="btn btn-neon">Выполнено</button>
       </div>
     </div>
   </section>
