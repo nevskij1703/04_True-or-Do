@@ -356,7 +356,11 @@ window.Game = (function () {
     window.AdManager.resetCounters();
     state.cardsThisSession = 0;
     state.currentPlayerIdx = 0;
-    state.bottleAngle = 0;
+    // state.bottleAngle НЕ сбрасываем: CSS transform на svg хранит
+    // фактический накопленный угол с прошлой партии. Если занулить state,
+    // следующий спин будет интерполировать назад (svg=2438deg → 1800deg)
+    // и бутылка крутанётся против часовой. Оставляем непрерывность —
+    // числовая точность float'а спокойно держит миллионы градусов.
     state.replaceUsed = false;
     state.selectedIdx = -1;
     buildSlots();
