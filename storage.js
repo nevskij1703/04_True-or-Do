@@ -1,11 +1,16 @@
 /**
  * storage.js — обёртка над localStorage.
  * Все ключи начинаются с префикса TOD_ чтобы не пересекаться с другими приложениями.
+ *
+ * Имена/пол игроков НЕ персистятся между загрузками страницы: они
+ * хранятся в JS-памяти модуля. При обновлении страницы возвращаются
+ * дефолты "Игрок 1" / "Игрок 2", а в рамках одной сессии подхватываются
+ * введённые ранее значения. Остальные настройки (режим, интенсивность,
+ * звук/вибрация, онбординг) живут в localStorage.
  */
 window.Storage = (function () {
   const PREFIX = 'TOD_';
   const KEYS = {
-    players:      PREFIX + 'players',
     mode:         PREFIX + 'mode',
     intensity:    PREFIX + 'intensity',
     seenCards:    PREFIX + 'seenCards',
@@ -14,6 +19,9 @@ window.Storage = (function () {
     onboardingOk: PREFIX + 'onboardingOk',
     mockAds:      PREFIX + 'mockAds'
   };
+
+  // Сессионные имена/пол игроков. Сбрасываются на reload страницы.
+  let sessionPlayers = null;
 
   function get(key, fallback) {
     try {
@@ -37,20 +45,18 @@ window.Storage = (function () {
     try { localStorage.removeItem(key); } catch (e) {}
   }
 
-  // === Игроки + пол ===
+  // === Игроки + пол (только в памяти, не в localStorage) ===
   function getPlayers() {
-    return get(KEYS.players, {
-      p1: 'Игрок 1', p2: 'Игрок 2',
-      g1: 'female',  g2: 'male'
-    });
+    if (sessionPlayers) return sessionPlayers;
+    return { p1: 'Игрок 1', p2: 'Игрок 2', g1: 'female', g2: 'male' };
   }
   function setPlayers(p1, p2, g1, g2) {
-    set(KEYS.players, {
+    sessionPlayers = {
       p1: p1 || 'Игрок 1',
       p2: p2 || 'Игрок 2',
       g1: g1 || 'female',
       g2: g2 || 'male'
-    });
+    };
   }
 
   // === Режим ===
@@ -92,6 +98,7 @@ window.Storage = (function () {
   // === Полный сброс ===
   function resetAll() {
     Object.values(KEYS).forEach(remove);
+    sessionPlayers = null;
   }
 
   return {
