@@ -56,10 +56,31 @@ window.Game = (function () {
     return arr;
   }
 
+  /**
+   * Раскладка 12 символов "?"/"!" по кругу:
+   * 6 правд + 6 действий, ещё случайно, но с ограничением —
+   * не более двух подряд одинаковых (с учётом замыкания круга).
+   */
+  function arrangeSlotTypes() {
+    const base = ['truth','truth','truth','truth','truth','truth',
+                  'dare','dare','dare','dare','dare','dare'];
+    function valid(arr) {
+      const n = arr.length;
+      for (let i = 0; i < n; i++) {
+        if (arr[i] === arr[(i + 1) % n] && arr[i] === arr[(i + 2) % n]) return false;
+      }
+      return true;
+    }
+    for (let attempt = 0; attempt < 500; attempt++) {
+      const candidate = shuffle(base);
+      if (valid(candidate)) return candidate;
+    }
+    // Fallback — гарантированно валидный паттерн TT DD TT DD TT DD ...
+    return ['truth','truth','dare','dare','truth','truth','dare','dare','truth','truth','dare','dare'];
+  }
+
   function buildSlots() {
-    // 6 правд + 6 действий, перемешать порядок
-    const types = shuffle(['truth', 'truth', 'truth', 'truth', 'truth', 'truth',
-                           'dare',  'dare',  'dare',  'dare',  'dare',  'dare']);
+    const types = arrangeSlotTypes();
     const slots = types.map(t => {
       const card = window.CardEngine.pick({
         type: t,
@@ -190,7 +211,6 @@ window.Game = (function () {
     document.getElementById('card-player').textContent = cur.name + ' ' + genderIcon(cur.gender);
     document.getElementById('card-player').className = 'gender-' + cur.gender;
     document.getElementById('card-text').textContent = card.text;
-    document.getElementById('card-category').textContent = card.category;
 
     const replaceBtn = document.getElementById('btn-replace');
     if (state.replaceUsed) replaceBtn.classList.add('hidden');
