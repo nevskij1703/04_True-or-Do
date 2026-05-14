@@ -597,17 +597,6 @@ input[type="range"]::-moz-range-thumb {
   text-transform: lowercase;
   letter-spacing: 0.6px;
 }
-.card .consent {
-  display: none;
-  position: absolute;
-  bottom: -28px; left: 0; right: 0;
-  font-size: 12px;
-  text-align: center;
-  color: var(--neon-rose);
-  text-shadow: 0 0 6px rgba(255, 102, 166, 0.5);
-}
-.card .consent.show { display: block; }
-
 .btn-ghost-link.below-card {
   margin-top: 6px;
   padding: 10px;

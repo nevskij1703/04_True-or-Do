@@ -190,15 +190,6 @@ window.Game = (function () {
     document.getElementById('card-text').textContent = card.text;
     document.getElementById('card-category').textContent = card.category;
 
-    const consentEl = document.getElementById('card-consent');
-    if (card.intensity >= 4) {
-      consentEl.textContent = 'Только если обоим комфортно.';
-      consentEl.classList.add('show');
-    } else {
-      consentEl.textContent = '';
-      consentEl.classList.remove('show');
-    }
-
     const replaceBtn = document.getElementById('btn-replace');
     if (state.replaceUsed) replaceBtn.classList.add('hidden');
     else replaceBtn.classList.remove('hidden');
