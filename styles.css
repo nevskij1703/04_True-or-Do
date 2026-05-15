@@ -25,10 +25,11 @@
   --stroke-strong: rgba(255, 102, 166, 0.55);
   --radius: 22px;
   --radius-sm: 14px;
-  --glow-pink: 0 0 12px rgba(255, 45, 138, 0.55), 0 0 28px rgba(255, 45, 138, 0.35);
-  --glow-purple: 0 0 14px rgba(155, 92, 255, 0.55), 0 0 30px rgba(155, 92, 255, 0.30);
-  --glow-blue: 0 0 14px rgba(15, 196, 255, 0.75), 0 0 30px rgba(15, 196, 255, 0.4);
-  --glow-red:  0 0 14px rgba(213, 42, 255, 0.75), 0 0 30px rgba(213, 42, 255, 0.4);
+  /* Glow ослаблен на ~50% — было слишком ярко, глаза напрягало. */
+  --glow-pink: 0 0 10px rgba(255, 45, 138, 0.30), 0 0 22px rgba(255, 45, 138, 0.18);
+  --glow-purple: 0 0 12px rgba(155, 92, 255, 0.30), 0 0 24px rgba(155, 92, 255, 0.16);
+  --glow-blue: 0 0 12px rgba(15, 196, 255, 0.40), 0 0 24px rgba(15, 196, 255, 0.20);
+  --glow-red:  0 0 12px rgba(213, 42, 255, 0.40), 0 0 24px rgba(213, 42, 255, 0.20);
 }
 
 * { box-sizing: border-box; }
@@ -38,9 +39,9 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(60% 40% at 15% 10%, rgba(155, 92, 255, 0.32) 0%, transparent 70%),
-    radial-gradient(50% 35% at 90% 95%, rgba(255, 45, 138, 0.28) 0%, transparent 75%),
-    radial-gradient(40% 30% at 85% 15%, rgba(77, 214, 255, 0.15) 0%, transparent 80%),
+    radial-gradient(60% 40% at 15% 10%, rgba(155, 92, 255, 0.18) 0%, transparent 70%),
+    radial-gradient(50% 35% at 90% 95%, rgba(255, 45, 138, 0.16) 0%, transparent 75%),
+    radial-gradient(40% 30% at 85% 15%, rgba(77, 214, 255, 0.09) 0%, transparent 80%),
     linear-gradient(165deg, var(--bg-0) 0%, var(--bg-1) 60%, var(--bg-2) 100%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
@@ -67,7 +68,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   position: absolute;
   bottom: -40px;
   color: var(--neon-rose);
-  text-shadow: 0 0 6px rgba(255, 102, 166, 0.8), 0 0 12px rgba(255, 45, 138, 0.5);
+  text-shadow: 0 0 4px rgba(255, 102, 166, 0.45), 0 0 10px rgba(255, 45, 138, 0.25);
   animation: floatHeart linear infinite;
   will-change: transform;
 }
@@ -103,8 +104,8 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 18px rgba(255, 45, 138, 0.35);
-  filter: drop-shadow(0 0 8px rgba(155, 92, 255, 0.4));
+  text-shadow: 0 0 12px rgba(255, 45, 138, 0.20);
+  filter: drop-shadow(0 0 5px rgba(155, 92, 255, 0.22));
   text-align: center;
 }
 .subtitle {
@@ -188,14 +189,14 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 .gender-btn[data-gender="female"] { color: var(--neon-rose); }
 .gender-btn[data-gender="male"]   { color: var(--neon-cyan); }
 .gender-btn.selected[data-gender="female"] {
-  background: rgba(255, 102, 166, 0.18);
+  background: rgba(255, 102, 166, 0.14);
   border-color: var(--neon-rose);
-  box-shadow: 0 0 12px rgba(255, 102, 166, 0.45);
+  box-shadow: 0 0 8px rgba(255, 102, 166, 0.22);
 }
 .gender-btn.selected[data-gender="male"] {
-  background: rgba(77, 214, 255, 0.15);
+  background: rgba(77, 214, 255, 0.12);
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 12px rgba(77, 214, 255, 0.45);
+  box-shadow: 0 0 8px rgba(77, 214, 255, 0.22);
 }
 
 /* ====== Режимы ====== */
@@ -243,7 +244,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   box-shadow: var(--glow-pink);
 }
 .mode-btn.selected .mode-sub { color: rgba(255, 255, 255, 0.7); }
-.mode-btn[data-mode="passion"].selected .mode-emoji { filter: drop-shadow(0 0 10px rgba(213, 42, 255, 0.95)); }
+.mode-btn[data-mode="passion"].selected .mode-emoji { filter: drop-shadow(0 0 6px rgba(213, 42, 255, 0.55)); }
 
 /* ====== Кнопки ====== */
 .btn {
@@ -313,7 +314,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 .settings-fab:active { transform: scale(0.94); }
 .settings-fab svg {
   width: 26px; height: 26px;
-  filter: drop-shadow(0 0 6px rgba(255, 102, 166, 0.5));
+  filter: drop-shadow(0 0 3px rgba(255, 102, 166, 0.30));
 }
 
 /* ====== Игровой экран ====== */
@@ -353,12 +354,12 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 }
 .player-chip.glow {
   border-color: var(--neon-pink);
-  box-shadow: 0 0 14px rgba(255, 45, 138, 0.55), inset 0 0 10px rgba(255, 102, 166, 0.18);
+  box-shadow: 0 0 8px rgba(255, 45, 138, 0.28), inset 0 0 8px rgba(255, 102, 166, 0.10);
   color: white;
 }
 .player-chip.glow.gender-male {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 14px rgba(77, 214, 255, 0.55), inset 0 0 10px rgba(77, 214, 255, 0.18);
+  box-shadow: 0 0 8px rgba(77, 214, 255, 0.28), inset 0 0 8px rgba(77, 214, 255, 0.10);
 }
 .player-chip.dim { opacity: 0.55; color: var(--text-dim); }
 
@@ -374,12 +375,12 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 .with-gender-icon[data-gender="female"]::after {
   content: "♀";
   color: var(--neon-rose);
-  text-shadow: 0 0 1px var(--neon-rose), 0 0 8px rgba(255, 102, 166, 0.55);
+  text-shadow: 0 0 1px var(--neon-rose), 0 0 5px rgba(255, 102, 166, 0.30);
 }
 .with-gender-icon[data-gender="male"]::after {
   content: "♂";
   color: var(--neon-cyan);
-  text-shadow: 0 0 1px var(--neon-cyan), 0 0 8px rgba(77, 214, 255, 0.55);
+  text-shadow: 0 0 1px var(--neon-cyan), 0 0 5px rgba(77, 214, 255, 0.30);
 }
 
 /* ===== Круг с 12 карточками ===== */
@@ -408,20 +409,20 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   transition: transform .25s ease, box-shadow .25s ease, background .25s ease, opacity .25s ease;
 }
 .slot.slot-truth {
-  background: linear-gradient(135deg, rgba(15, 196, 255, 1), rgba(95, 218, 255, 0.9));
+  background: linear-gradient(135deg, rgba(15, 196, 255, 0.88), rgba(95, 218, 255, 0.75));
   box-shadow:
-    0 0 14px rgba(15, 196, 255, 0.85),
-    0 0 28px rgba(15, 196, 255, 0.45),
-    inset 0 0 10px rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(95, 218, 255, 1);
+    0 0 10px rgba(15, 196, 255, 0.45),
+    0 0 18px rgba(15, 196, 255, 0.22),
+    inset 0 0 8px rgba(255, 255, 255, 0.20);
+  border: 1px solid rgba(95, 218, 255, 0.85);
 }
 .slot.slot-dare {
-  background: linear-gradient(135deg, rgba(213, 42, 255, 1), rgba(231, 128, 255, 0.9));
+  background: linear-gradient(135deg, rgba(213, 42, 255, 0.88), rgba(231, 128, 255, 0.75));
   box-shadow:
-    0 0 14px rgba(213, 42, 255, 0.85),
-    0 0 28px rgba(213, 42, 255, 0.45),
-    inset 0 0 10px rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(231, 128, 255, 1);
+    0 0 10px rgba(213, 42, 255, 0.45),
+    0 0 18px rgba(213, 42, 255, 0.22),
+    inset 0 0 8px rgba(255, 255, 255, 0.20);
+  border: 1px solid rgba(231, 128, 255, 0.85);
 }
 .slot.used {
   background: rgba(255, 255, 255, 0.03);
@@ -432,13 +433,13 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 }
 .slot.highlight {
   transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle))) scale(1.18);
-  box-shadow: 0 0 18px rgba(255, 235, 130, 0.9), 0 0 30px rgba(255, 220, 120, 0.7);
-  filter: brightness(1.2);
+  box-shadow: 0 0 12px rgba(255, 235, 130, 0.55), 0 0 22px rgba(255, 220, 120, 0.35);
+  filter: brightness(1.12);
   z-index: 2;
 }
 .slot.ghost-highlight {
   transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))) rotate(calc(-1 * var(--angle))) scale(1.08);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
   color: white;
 }
 .slot-symbol {
@@ -449,8 +450,8 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   line-height: 1;
   color: white;
   text-shadow:
-    0 0 6px rgba(0, 0, 0, 0.45),
-    0 0 12px rgba(255, 255, 255, 0.55);
+    0 0 4px rgba(0, 0, 0, 0.35),
+    0 0 8px rgba(255, 255, 255, 0.30);
 }
 .slot-arrow-svg {
   width: 24px; height: 24px;
@@ -470,8 +471,8 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 .bottle-svg {
   width: 100%; height: 100%;
   filter:
-    drop-shadow(0 0 6px rgba(255, 45, 138, 0.6))
-    drop-shadow(0 0 14px rgba(155, 92, 255, 0.45));
+    drop-shadow(0 0 4px rgba(255, 45, 138, 0.32))
+    drop-shadow(0 0 10px rgba(155, 92, 255, 0.22));
   transform: rotate(0deg);
   transform-origin: 50% 50%;
 }
@@ -507,22 +508,22 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 18px rgba(15, 196, 255, 0.35);
-  filter: drop-shadow(0 0 10px rgba(15, 196, 255, 0.45));
+  text-shadow: 0 0 12px rgba(15, 196, 255, 0.20);
+  filter: drop-shadow(0 0 6px rgba(15, 196, 255, 0.25));
 }
 .card-title.title-truth {
   background: linear-gradient(135deg, var(--neon-blue), var(--neon-blue-soft));
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 0 18px rgba(15, 196, 255, 0.4);
-  filter: drop-shadow(0 0 10px rgba(15, 196, 255, 0.45));
+  text-shadow: 0 0 12px rgba(15, 196, 255, 0.22);
+  filter: drop-shadow(0 0 6px rgba(15, 196, 255, 0.25));
 }
 .card-title.title-dare {
   background: linear-gradient(135deg, var(--neon-red), var(--neon-red-soft));
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 0 18px rgba(213, 42, 255, 0.4);
-  filter: drop-shadow(0 0 10px rgba(213, 42, 255, 0.45));
+  text-shadow: 0 0 12px rgba(213, 42, 255, 0.22);
+  filter: drop-shadow(0 0 6px rgba(213, 42, 255, 0.25));
 }
 
 /* Бейдж с символом "?" (Правда) или "!" (Действие) над заголовком */
@@ -543,21 +544,21 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 }
 .title-badge.badge-truth {
   color: var(--neon-blue);
-  background: radial-gradient(circle at 50% 30%, rgba(15, 196, 255, 0.45), rgba(15, 196, 255, 0.1));
+  background: radial-gradient(circle at 50% 30%, rgba(15, 196, 255, 0.28), rgba(15, 196, 255, 0.06));
   box-shadow:
-    0 0 22px rgba(15, 196, 255, 0.75),
-    0 0 42px rgba(15, 196, 255, 0.35),
-    inset 0 0 20px rgba(15, 196, 255, 0.35);
-  text-shadow: 0 0 14px rgba(15, 196, 255, 1), 0 0 6px rgba(255, 255, 255, 0.6);
+    0 0 14px rgba(15, 196, 255, 0.42),
+    0 0 26px rgba(15, 196, 255, 0.18),
+    inset 0 0 14px rgba(15, 196, 255, 0.18);
+  text-shadow: 0 0 8px rgba(15, 196, 255, 0.55), 0 0 3px rgba(255, 255, 255, 0.35);
 }
 .title-badge.badge-dare {
   color: var(--neon-red);
-  background: radial-gradient(circle at 50% 30%, rgba(213, 42, 255, 0.45), rgba(213, 42, 255, 0.1));
+  background: radial-gradient(circle at 50% 30%, rgba(213, 42, 255, 0.28), rgba(213, 42, 255, 0.06));
   box-shadow:
-    0 0 22px rgba(213, 42, 255, 0.75),
-    0 0 42px rgba(213, 42, 255, 0.35),
-    inset 0 0 20px rgba(213, 42, 255, 0.35);
-  text-shadow: 0 0 14px rgba(213, 42, 255, 1), 0 0 6px rgba(255, 255, 255, 0.6);
+    0 0 14px rgba(213, 42, 255, 0.42),
+    0 0 26px rgba(213, 42, 255, 0.18),
+    inset 0 0 14px rgba(213, 42, 255, 0.18);
+  text-shadow: 0 0 8px rgba(213, 42, 255, 0.55), 0 0 3px rgba(255, 255, 255, 0.35);
 }
 /* Чип-метка "Чей ход" — должно быть заметно, кому выполнять карточку. */
 .card-player-chip {
@@ -574,14 +575,14 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   border: 1.8px solid var(--neon-rose);
   border-radius: 999px;
   box-shadow:
-    0 0 14px rgba(255, 102, 166, 0.45),
-    inset 0 0 12px rgba(255, 102, 166, 0.18);
+    0 0 8px rgba(255, 102, 166, 0.22),
+    inset 0 0 8px rgba(255, 102, 166, 0.10);
 }
 .card-player-chip.gender-male {
   border-color: var(--neon-cyan);
   box-shadow:
-    0 0 14px rgba(77, 214, 255, 0.5),
-    inset 0 0 12px rgba(77, 214, 255, 0.18);
+    0 0 8px rgba(77, 214, 255, 0.25),
+    inset 0 0 8px rgba(77, 214, 255, 0.10);
 }
 .card-player-chip::before {
   content: "Ход";
@@ -628,29 +629,29 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   color: var(--text);
 }
 .card.card-truth {
-  border-color: rgba(15, 196, 255, 0.75);
+  border-color: rgba(15, 196, 255, 0.50);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 0 28px rgba(15, 196, 255, 0.18),
-    0 18px 50px rgba(0, 0, 0, 0.55),
-    0 0 28px rgba(15, 196, 255, 0.65),
-    0 0 56px rgba(15, 196, 255, 0.4);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 22px rgba(15, 196, 255, 0.10),
+    0 16px 38px rgba(0, 0, 0, 0.5),
+    0 0 18px rgba(15, 196, 255, 0.32),
+    0 0 40px rgba(15, 196, 255, 0.18);
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(15, 196, 255, 0.32), transparent 72%),
-    radial-gradient(80% 60% at 50% 100%, rgba(15, 196, 255, 0.18), transparent 70%),
+    radial-gradient(120% 90% at 50% 0%, rgba(15, 196, 255, 0.18), transparent 72%),
+    radial-gradient(80% 60% at 50% 100%, rgba(15, 196, 255, 0.10), transparent 70%),
     linear-gradient(170deg, rgba(20, 10, 50, 0.95), rgba(10, 4, 26, 0.95));
 }
 .card.card-dare {
-  border-color: rgba(213, 42, 255, 0.75);
+  border-color: rgba(213, 42, 255, 0.50);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 0 28px rgba(213, 42, 255, 0.18),
-    0 18px 50px rgba(0, 0, 0, 0.55),
-    0 0 28px rgba(213, 42, 255, 0.65),
-    0 0 56px rgba(213, 42, 255, 0.4);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 22px rgba(213, 42, 255, 0.10),
+    0 16px 38px rgba(0, 0, 0, 0.5),
+    0 0 18px rgba(213, 42, 255, 0.32),
+    0 0 40px rgba(213, 42, 255, 0.18);
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(213, 42, 255, 0.32), transparent 72%),
-    radial-gradient(80% 60% at 50% 100%, rgba(213, 42, 255, 0.18), transparent 70%),
+    radial-gradient(120% 90% at 50% 0%, rgba(213, 42, 255, 0.18), transparent 72%),
+    radial-gradient(80% 60% at 50% 100%, rgba(213, 42, 255, 0.10), transparent 70%),
     linear-gradient(170deg, rgba(28, 8, 50, 0.95), rgba(14, 4, 28, 0.95));
 }
 .card-frame {
@@ -671,17 +672,17 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   font-family: Georgia, "Times New Roman", serif;
   line-height: 1;
   color: var(--neon-rose);
-  text-shadow: 0 0 10px rgba(255, 102, 166, 0.85), 0 0 2px currentColor;
+  text-shadow: 0 0 6px rgba(255, 102, 166, 0.45), 0 0 2px currentColor;
   -webkit-text-stroke: 0.5px currentColor;
   transition: color .25s ease, text-shadow .25s ease;
 }
 .card.card-truth .card-corner {
   color: var(--neon-blue);
-  text-shadow: 0 0 10px rgba(15, 196, 255, 0.9), 0 0 2px var(--neon-blue);
+  text-shadow: 0 0 6px rgba(15, 196, 255, 0.50), 0 0 2px var(--neon-blue);
 }
 .card.card-dare .card-corner {
   color: var(--neon-red);
-  text-shadow: 0 0 10px rgba(213, 42, 255, 0.9), 0 0 2px var(--neon-red);
+  text-shadow: 0 0 6px rgba(213, 42, 255, 0.50), 0 0 2px var(--neon-red);
 }
 .card-corner.tl { top: 12px; left: 14px; }
 .card-corner.br { bottom: 12px; right: 14px; transform: rotate(180deg); }
@@ -760,7 +761,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   opacity: 0;
   transition: opacity .2s ease, transform .2s ease;
   z-index: 10000;
-  box-shadow: var(--glow-pink);
+  box-shadow: 0 0 8px rgba(255, 45, 138, 0.25);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -917,8 +918,8 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   font-size: 56px;
   color: var(--neon-pink);
   text-shadow:
-    0 0 14px rgba(255, 45, 138, 0.8),
-    0 0 28px rgba(255, 45, 138, 0.6);
+    0 0 10px rgba(255, 45, 138, 0.45),
+    0 0 22px rgba(255, 45, 138, 0.30);
   animation: heartBeat 1.8s ease-in-out infinite;
 }
 @keyframes heartBeat {
@@ -947,8 +948,8 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 .rate-stars span {
   color: #ffd24a;
   text-shadow:
-    0 0 10px rgba(255, 210, 74, 0.9),
-    0 0 22px rgba(255, 200, 60, 0.55);
+    0 0 6px rgba(255, 210, 74, 0.55),
+    0 0 14px rgba(255, 200, 60, 0.30);
   -webkit-text-stroke: 0.5px #ffba1e;
   display: inline-block;
   transform-origin: center;
@@ -973,7 +974,7 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
 .rate-highlight {
   color: #ffd24a;
   font-weight: 800;
-  text-shadow: 0 0 8px rgba(255, 210, 74, 0.55);
+  text-shadow: 0 0 5px rgba(255, 210, 74, 0.30);
   -webkit-text-stroke: 0.4px #ffba1e;
 }
 .btn-ghost-link.rate-later {
