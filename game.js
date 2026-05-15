@@ -354,6 +354,19 @@ window.Game = (function () {
    * Показываем модалку после каждой завершённой партии (12 ходов),
    * пока игрок не нажмёт "Оценить" хоть раз. Тогда сохраняем флаг
    * и больше никогда не беспокоим.
+   *
+   * Отношения с рекламой:
+   * - Interstitial никогда не появляется НЕПОСРЕДСТВЕННО перед Rate Us:
+   *   единственный триггер ad — в spinBottle() между остановкой бутылки
+   *   и показом карточки. Между этой рекламой и Rate Us всегда стоит
+   *   user-action (прочитать карточку → "Выполнено" → end-overlay →
+   *   клик навигации). Так что back-to-back ad→RateUs архитектурно
+   *   невозможен.
+   * - Если игрок нажал "Может позже" — это "цена" пропуска оценки:
+   *   ПОСЛЕ Rate Us показываем interstitial, и только потом резолвим
+   *   и пускаем дальше (start() или screen-home).
+   * - Если игрок нажал "Оценить" — он нас уже поблагодарил, рекламу
+   *   не показываем, сохраняем флаг и идём дальше.
    */
   let _rateResolve = null;
   function maybeShowRateModal() {
@@ -365,13 +378,15 @@ window.Game = (function () {
       requestAnimationFrame(() => m.classList.add('show'));
     });
   }
-  function closeRateModal() {
+  function dismissRateModalDom() {
     const m = document.getElementById('rate-modal');
     m.classList.remove('show');
-    setTimeout(() => m.classList.add('hidden'), 220);
-    const r = _rateResolve;
-    _rateResolve = null;
-    if (r) r();
+    return new Promise(res => {
+      setTimeout(() => {
+        m.classList.add('hidden');
+        res();
+      }, 220);
+    });
   }
   function rateNow() {
     window.Storage.setRateGiven(true);
@@ -380,10 +395,25 @@ window.Game = (function () {
     //   Google Play:    window.location.href = 'market://details?id=com.matryoshka.trueordo';
     //   fallback web:   window.open('https://example.com', '_blank');
     window.UI.toast('Спасибо! ❤');
-    closeRateModal();
+    // "Оценить" — без рекламы.
+    dismissRateModalDom().then(() => {
+      const r = _rateResolve;
+      _rateResolve = null;
+      if (r) r();
+    });
   }
-  function rateLater() {
-    closeRateModal();
+  async function rateLater() {
+    // 1) Закрываем модалку с анимацией.
+    await dismissRateModalDom();
+    // 2) Показываем interstitial — "цена" отложенной оценки.
+    //    Если ad не доступен / упал — Promise всё равно резолвится.
+    try {
+      await window.AdManager.showInterstitialAd();
+    } catch (e) { /* проглатываем — игра не должна виснуть */ }
+    // 3) Резолвим awaiting promise → playAgain/backHome продолжат.
+    const r = _rateResolve;
+    _rateResolve = null;
+    if (r) r();
   }
 
   /* ===== Старт / конец ===== */
