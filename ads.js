@@ -179,6 +179,15 @@ window.AdManager = (function () {
     return backend || 'pending';
   }
 
+  // Eager init: определяем backend и запускаем preload СРАЗУ при загрузке ads.js,
+  // не дожидаясь первого showInterstitialAd. Иначе lazy-init запускает preload
+  // одновременно с первым show — и Java не успевает прогреть рекламу,
+  // первый показ висит 2-3 секунды на сетевой загрузке.
+  // К моменту вызова этой строки config.js и storage.js уже выполнены (порядок
+  // <script> в index.html), а Capacitor зарегистрировал window.YandexAds bridge
+  // до загрузки страницы.
+  ensureBackend();
+
   return {
     showInterstitialAd,
     showRewardedAd,

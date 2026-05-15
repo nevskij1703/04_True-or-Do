@@ -45,7 +45,7 @@
 
 ### Что делает APK-сборщик
 
-`html2apk -YandexAdsBridge -ProjectFolder <thisDir> -AppName "..." -AppId com.matryoshka.trueordo -OutputFile <...>.apk` дополнительно встраивает gradle-зависимость, ACCESS_NETWORK_STATE, `YandexAdsBridge.java` и патчит MainActivity (см. [docs/ADS.md](docs/ADS.md)).
+`html2apk -YandexAdsBridge -ProjectFolder <thisDir> -AppName "..." -AppId com.terekh.trueordo -OutputFile <...>.apk` дополнительно встраивает gradle-зависимость, ACCESS_NETWORK_STATE, `YandexAdsBridge.java` и патчит MainActivity (см. [docs/ADS.md](docs/ADS.md)).
 
 ### Правила (для будущих сессий)
 
@@ -55,3 +55,16 @@
 - `window.Storage.getMockAds()` может **переопределить** конфиг (для dev-panel). В рантайме это применяется только при первом `ensureBackend()` — повторные смены тогглера не переключают backend без перезагрузки.
 - Контракт `window.__yandexAdsCallback(kind, event)` зафиксирован на стороне Java в html2apk — не меняй имя callback'а в JS.
 - Точка вызова рекламы из gameplay — в [game.js](game.js) (`maybeShowInterstitial()` в `spinBottle`).
+
+## Сейвы и миграции
+
+Сейв в `localStorage['TOD_save']` — единый JSON с полем `schemaVersion`. Раньше storage был multi-key (`TOD_mode`, `TOD_seenCards`, ...) — это всё ещё подхватывается через legacy-коллектор при первом запуске и автоматически переезжает в single-key. Спецификация — в [docs/SAVES.md](docs/SAVES.md). Файлы: [storage.js](storage.js), [migrations.js](migrations.js).
+
+### Правила (для будущих сессий)
+
+- **Любое изменение формата сейва ОБЯЗАНО иметь миграцию.** Если меняешь `DEFAULTS()` в `storage.js` — добавь функцию в `migrations.js` (ключ N+1).
+- **НЕ возвращай multi-key хранение.** Все поля живут в одном JSON под `TOD_save`. API `window.Storage.*` остался прежним.
+- **НЕ удаляй и НЕ меняй уже опубликованные миграции.**
+- **`migrations.js` подключается в `index.html` ДО `storage.js`** — иначе `window.Migrations` undefined в момент IIFE storage.
+- **При запросе релиз-кандидата** используй skill `prepare-release-candidate`.
+- Состояние последнего опубликованного релиза — `.claude/release-state.json`. Обновляется автоматически skill'ом `prepare-release-candidate` — после сборки APK он спрашивает «отправляешь в стор?», и при ответе «да» записывает текущую `schemaVersion`/`versionCode`/`versionName` в файл.

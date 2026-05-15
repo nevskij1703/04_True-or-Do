@@ -400,8 +400,8 @@ window.Game = (function () {
   function rateNow() {
     window.Storage.setRateGiven(true);
     // TODO: на проде здесь открываем стор приложения. В вебе — заглушка.
-    //   APK + RuStore:  window.location.href = 'rustore://apps.rustore.ru/app/com.matryoshka.trueordo';
-    //   Google Play:    window.location.href = 'market://details?id=com.matryoshka.trueordo';
+    //   APK + RuStore:  window.location.href = 'rustore://apps.rustore.ru/app/com.terekh.trueordo';
+    //   Google Play:    window.location.href = 'market://details?id=com.terekh.trueordo';
     //   fallback web:   window.open('https://example.com', '_blank');
     window.UI.toast('Спасибо! ❤');
     // "Оценить" — без рекламы.

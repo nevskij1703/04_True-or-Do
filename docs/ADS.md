@@ -35,7 +35,7 @@ Unit-ID в [config.js](../config.js):
 & "$env:LOCALAPPDATA\Programs\html2apk\html2apk.ps1" `
   -ProjectFolder "C:\Users\Александр\Desktop\Claude\04_True-or-Do" `
   -AppName "Правда или Действие" `
-  -AppId "com.matryoshka.trueordo" `
+  -AppId "com.terekh.trueordo" `
   -OutputFile "$env:USERPROFILE\Downloads\TrueOrDo.apk" `
   -YandexAdsBridge
 ```
