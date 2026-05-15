@@ -129,6 +129,9 @@
 
     $('btn-play-again').addEventListener('click', () => window.Game.playAgain());
     $('btn-back-home').addEventListener('click', () => window.Game.backHome());
+
+    $('btn-rate-now').addEventListener('click', () => window.Game.rateNow());
+    $('btn-rate-later').addEventListener('click', () => window.Game.rateLater());
   }
 
   /* ====== Настройки (модалка) ====== */

@@ -339,13 +339,51 @@ window.Game = (function () {
     setTimeout(() => o.classList.add('hidden'), 220);
   }
 
-  function playAgain() {
+  async function playAgain() {
     hideEndOverlay();
+    await maybeShowRateModal();
     start();
   }
-  function backHome() {
+  async function backHome() {
     hideEndOverlay();
+    await maybeShowRateModal();
     window.UI.show('screen-home');
+  }
+
+  /* ===== Rate Us =====
+   * Показываем модалку после каждой завершённой партии (12 ходов),
+   * пока игрок не нажмёт "Оценить" хоть раз. Тогда сохраняем флаг
+   * и больше никогда не беспокоим.
+   */
+  let _rateResolve = null;
+  function maybeShowRateModal() {
+    if (window.Storage.getRateGiven()) return Promise.resolve();
+    return new Promise(resolve => {
+      _rateResolve = resolve;
+      const m = document.getElementById('rate-modal');
+      m.classList.remove('hidden');
+      requestAnimationFrame(() => m.classList.add('show'));
+    });
+  }
+  function closeRateModal() {
+    const m = document.getElementById('rate-modal');
+    m.classList.remove('show');
+    setTimeout(() => m.classList.add('hidden'), 220);
+    const r = _rateResolve;
+    _rateResolve = null;
+    if (r) r();
+  }
+  function rateNow() {
+    window.Storage.setRateGiven(true);
+    // TODO: на проде здесь открываем стор приложения. В вебе — заглушка.
+    //   APK + RuStore:  window.location.href = 'rustore://apps.rustore.ru/app/com.matryoshka.trueordo';
+    //   Google Play:    window.location.href = 'market://details?id=com.matryoshka.trueordo';
+    //   fallback web:   window.open('https://example.com', '_blank');
+    window.UI.toast('Спасибо! ❤');
+    closeRateModal();
+  }
+  function rateLater() {
+    closeRateModal();
   }
 
   /* ===== Старт / конец ===== */
@@ -401,6 +439,8 @@ window.Game = (function () {
     playAgain,
     backHome,
     refresh,
+    rateNow,
+    rateLater,
     _state: state
   };
 })();

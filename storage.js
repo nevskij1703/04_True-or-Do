@@ -16,7 +16,8 @@ window.Storage = (function () {
     sound:        PREFIX + 'sound',
     vibration:    PREFIX + 'vibration',
     onboardingOk: PREFIX + 'onboardingOk',
-    mockAds:      PREFIX + 'mockAds'
+    mockAds:      PREFIX + 'mockAds',
+    rateGiven:    PREFIX + 'rateGiven' // true → больше никогда не показывать Rate Us
   };
 
   // Сессионные имена/пол игроков. Сбрасываются на reload страницы.
@@ -90,6 +91,10 @@ window.Storage = (function () {
   function getMockAds() { return get(KEYS.mockAds, window.GAME_CONFIG.mockAds); }
   function setMockAds(v) { set(KEYS.mockAds, !!v); }
 
+  // === Rate Us (показывать после каждой партии, пока не нажал "Оценить") ===
+  function getRateGiven() { return get(KEYS.rateGiven, false); }
+  function setRateGiven(v) { set(KEYS.rateGiven, !!v); }
+
   // === Полный сброс ===
   function resetAll() {
     Object.values(KEYS).forEach(remove);
@@ -105,6 +110,7 @@ window.Storage = (function () {
     getSound, setSound, getVibration, setVibration,
     isOnboarded, setOnboarded,
     getMockAds, setMockAds,
+    getRateGiven, setRateGiven,
     resetAll
   };
 })();
