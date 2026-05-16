@@ -174,6 +174,23 @@
     sound.addEventListener('change', e => window.Storage.setSound(e.target.checked));
     vibration.addEventListener('change', e => window.Storage.setVibration(e.target.checked));
 
+    // Политика конфиденциальности — открываем внешнюю ссылку.
+    // В браузере window.open(...) откроет новую вкладку; в APK-сборке (Capacitor
+    // WebView) такой intent делегируется системному браузеру через
+    // shouldOverrideUrlLoading в MainActivity (см. html2apk -YandexAdsBridge).
+    const privacyBtn = $('btn-privacy-policy');
+    if (privacyBtn) {
+      privacyBtn.addEventListener('click', () => {
+        const url = 'https://cloud.mail.ru/public/mLDc/6CqsC9X5i';
+        try {
+          window.open(url, '_blank', 'noopener,noreferrer');
+        } catch (e) {
+          // Fallback на случай, если popup-blocker / WebView не дал window.open
+          window.location.href = url;
+        }
+      });
+    }
+
     // Имена + пол в настройках — сохраняем и обновляем игру на лету
     ['set-p1', 'set-p2'].forEach(id => {
       $(id).addEventListener('input', saveSettingsPlayers);

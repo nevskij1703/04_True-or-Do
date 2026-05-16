@@ -893,6 +893,31 @@ input[type="text"], input[type="range"] { font: inherit; color: inherit; }
   color: var(--text-dim);
   text-align: center;
 }
+
+.privacy-link {
+  display: block;
+  width: 100%;
+  margin: 14px 0 0;
+  padding: 8px 4px;
+  background: transparent;
+  border: none;
+  color: rgba(246, 233, 242, 0.55);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-align: center;
+  text-decoration: underline;
+  text-decoration-color: rgba(246, 233, 242, 0.25);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .15s ease, text-decoration-color .15s ease;
+}
+.privacy-link:hover,
+.privacy-link:focus-visible {
+  color: var(--neon-rose);
+  text-decoration-color: var(--neon-rose);
+  outline: none;
+}
 .settings-section {
   margin: 16px 0 4px;
 }
